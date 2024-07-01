@@ -6,7 +6,7 @@ import User from "../models/user.js";
 const authRouter = Router(); // Router for handling authentication routes.
 
 // SIGN UP
-authRouter.post("/signup", async (req, res) => {
+authRouter.post("/api/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 

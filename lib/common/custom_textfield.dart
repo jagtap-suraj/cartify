@@ -1,10 +1,13 @@
+import 'package:cartify/constants/global_variables.dart';
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String labelText;
   final String hintText;
-  const CustomTextField({super.key, required this.controller, required this.labelText, required this.hintText});
+  final bool isEmail;
+
+  const CustomTextField({super.key, required this.controller, required this.labelText, required this.hintText, this.isEmail = false});
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +27,15 @@ class CustomTextField extends StatelessWidget {
           ),
         ),
       ),
+      validator: (val) {
+        if (val == null || val.isEmpty) {
+          return hintText;
+        }
+        if (isEmail && !emailRegex.hasMatch(val)) {
+          return 'Please enter a valid email address';
+        }
+        return null;
+      },
     );
   }
 }

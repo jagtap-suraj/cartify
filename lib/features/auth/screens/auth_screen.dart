@@ -1,7 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cartify/common/custom_button.dart';
 import 'package:cartify/common/custom_textfield.dart';
 import 'package:cartify/constants/global_variables.dart';
+import 'package:cartify/constants/utils.dart';
+import 'package:cartify/features/auth/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 enum AuthType {
   signIn,
@@ -18,6 +23,7 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   AuthType _authType = AuthType.signUp;
+  final AuthService authService = AuthService();
 
   /// A global key used to uniquely identify the respective widget.
   final _signUpFormKey = GlobalKey<FormState>();
@@ -28,6 +34,34 @@ class _AuthScreenState extends State<AuthScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
+
+  void signUpUser() async {
+    if (_signUpFormKey.currentState!.validate()) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(child: CircularProgressIndicator()),
+      );
+      // Capture the context before the async gap
+      var localContext = context;
+      try {
+        final value = await authService.signUpUser(
+          email: _emailController.text,
+          password: _passwordController.text,
+          name: _nameController.text,
+        );
+        showToast(value);
+        // Use the captured context after the async operation
+        if (!mounted) return;
+        Navigator.pop(localContext); // Close the progress dialog
+        showToast(value);
+      } catch (e) {
+        if (!mounted) return;
+        Navigator.pop(localContext); // Close the progress dialog
+        showToast('An error occurred. Please try again.');
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -88,6 +122,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             controller: _emailController,
                             hintText: "Enter your email",
                             labelText: "Email",
+                            isEmail: true,
                           ),
                           const SizedBox(height: 10),
                           CustomTextField(
@@ -99,7 +134,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           CustomButton(
                             text: "Sign Up",
                             onTap: () {
-                              //TODO: Perfom Validation using signUpFormKey
+                              signUpUser();
                             },
                             color: GlobalVariables.secondaryColor,
                           ),
