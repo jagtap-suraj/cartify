@@ -80,7 +80,6 @@ class _AuthScreenState extends State<AuthScreen> {
         builder: (context) => const Center(child: CircularProgressIndicator()),
       );
 
-      // Retrieve the userProvider from the root of the widget tree
       final userProvider = Provider.of<UserProvider>(context, listen: false);
 
       try {
@@ -89,19 +88,19 @@ class _AuthScreenState extends State<AuthScreen> {
           password: _passwordController.text,
           onTokenReceived: (responseBody) async {
             await storage.write(key: 'x-auth-token', value: jsonDecode(responseBody)['token']);
-
-            // Use the userProvider here to set the user
             userProvider.setUser(responseBody);
           },
         );
 
         if (!mounted) return;
+        // Ensure the dialog is closed before navigating
         Navigator.pop(context); // Close the progress dialog
         showSnackBar(context, value);
-        Navigator.pushNamedAndRemoveUntil(context, HomeScreen.routeName, (route) => false); // Navigate to the home screen (and remove the auth screen from the stack
+        // Navigate to the HomeScreen
+        Navigator.pushNamedAndRemoveUntil(context, HomeScreen.routeName, (route) => false);
       } catch (e) {
         if (!mounted) return;
-        Navigator.pop(context); // Close the progress dialog
+        Navigator.pop(context); // Ensure the dialog is closed even in case of an error
         showSnackBar(context, 'An error occurred. Please try again.');
       }
     }

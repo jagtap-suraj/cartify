@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:cartify/constants/error_handling.dart';
 import 'package:cartify/constants/global_variables.dart';
+import 'package:cartify/models/user.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService {
-  final storage = const FlutterSecureStorage();
   Future<String> signUpUser({
     required String email,
     required String password,
@@ -19,12 +19,19 @@ class AuthService {
         return 'No internet connection';
       }
 
+      User user = User(
+        id: '',
+        name: name,
+        password: password,
+        email: email,
+        address: '',
+        type: '',
+        token: '',
+      );
+
       http.Response res = await http.post(
         Uri.parse('$uri/api/signup'),
-        body: jsonEncode({
-          'email': email,
-          'password': password
-        }),
+        body: user.toJson(),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -65,9 +72,47 @@ class AuthService {
       final httpErrorHandleResponse = httpErrorHandle(response: res);
       if (httpErrorHandleResponse == null) {
         onTokenReceived(res.body);
+        const storage = FlutterSecureStorage();
         await storage.write(key: 'x-auth-token', value: jsonDecode(res.body)['token']);
 
         return 'logged in successfully';
+      } else {
+        return httpErrorHandleResponse;
+      }
+    } catch (e) {
+      return 'An error occured. Please try again later';
+    }
+  }
+
+  // Get user data
+  Future<String> getUserData({
+    // a callback to store user data in provider
+    required Function(String) onUserDataReceived,
+  }) async {
+    try {
+      const storage = FlutterSecureStorage();
+      final String? token = await storage.read(key: 'x-auth-token');
+      if (token == null) {
+        await storage.write(key: 'x-auth-token', value: '');
+        return 'Token not found';
+      }
+      var tokenRes = await http.post(Uri.parse('$uri/api/istokenvalid'), headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'x-auth-token': token,
+      });
+      var response = jsonDecode(tokenRes.body);
+      if (response == false) {
+        return 'Token is invalid';
+      }
+      // get the user data
+      http.Response userRes = await http.get(Uri.parse('$uri/'), headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'x-auth-token': token,
+      });
+      final httpErrorHandleResponse = httpErrorHandle(response: userRes);
+      if (httpErrorHandleResponse == null) {
+        onUserDataReceived(userRes.body);
+        return 'User data received successfully';
       } else {
         return httpErrorHandleResponse;
       }
