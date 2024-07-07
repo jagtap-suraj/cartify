@@ -4,6 +4,7 @@ import bcryptjs from "bcryptjs";
 import User from "../models/user.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import authMiddleware from "../middlewares/authMiddleware.js";
 dotenv.config();
 
 const authRouter = Router(); // Router for handling authentication routes.
@@ -88,6 +89,38 @@ authRouter.post("/api/signin", async (req, res) => {
         }
      */
     res.json({ token, ...user._doc });
+  } catch (e) {
+    console.error(e);
+    res
+      .status(500)
+      .json({ error: "An unexpected error occurred. Please try again later." });
+  }
+});
+
+// ISTOKENVALID
+authRouter.post("/api/istokenvalid", async (req, res) => {
+  try {
+    const token = req.header("x-auth-token");
+    if (!token) return res.json(false);
+    const isVerified = jwt.verify(token, process.env.JWT_SECRETORPRIVATEKEY);
+    if (!isVerified) return res.json(false);
+    // isVerified.id gives us the user id as we have used { id: user._id } while signing the token.
+    const user = await User.findById(isVerified.id);
+    if (!user) return res.json(false);
+    res.json(true);
+  } catch (e) {
+    console.error(e);
+    res.json(false);
+  }
+});
+
+// GET USER
+// GET USER
+authRouter.get("/", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user);;
+    // Combine the token and user document into a single response
+    res.json({ token: req.token, ...user._doc });
   } catch (e) {
     console.error(e);
     res
