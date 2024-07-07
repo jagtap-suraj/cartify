@@ -1,4 +1,5 @@
 import 'package:cartify/features/auth/screens/auth_screen.dart';
+import 'package:cartify/features/auth/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 
 /// Generates the appropriate route based on the given [routeSettings].
@@ -11,6 +12,11 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       return MaterialPageRoute(
         settings: routeSettings,
         builder: (context) => const AuthScreen(),
+      );
+    case HomeScreen.routeName:
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (context) => const HomeScreen(),
       );
     default:
       return MaterialPageRoute(

@@ -1,12 +1,16 @@
-// ignore_for_file: use_build_context_synchronously
+import 'dart:convert';
 
 import 'package:cartify/common/custom_button.dart';
 import 'package:cartify/common/custom_textfield.dart';
 import 'package:cartify/constants/global_variables.dart';
 import 'package:cartify/constants/utils.dart';
+import 'package:cartify/features/auth/screens/home_screen.dart';
 import 'package:cartify/features/auth/services/auth_service.dart';
+import 'package:cartify/providers/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 
 enum AuthType {
   signIn,
@@ -24,6 +28,8 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   AuthType _authType = AuthType.signUp;
   final AuthService authService = AuthService();
+  bool _isPasswordVisible = false;
+  final storage = const FlutterSecureStorage();
 
   /// A global key used to uniquely identify the respective widget.
   final _signUpFormKey = GlobalKey<FormState>();
@@ -35,30 +41,68 @@ class _AuthScreenState extends State<AuthScreen> {
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
 
+  void _togglePasswordVisibility() {
+    setState(() {
+      _isPasswordVisible = !_isPasswordVisible;
+    });
+  }
+
   void signUpUser() async {
     if (_signUpFormKey.currentState!.validate()) {
+      // Show dialog while the user is being signed up
       showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) => const Center(child: CircularProgressIndicator()),
       );
-      // Capture the context before the async gap
-      var localContext = context;
       try {
         final value = await authService.signUpUser(
           email: _emailController.text,
           password: _passwordController.text,
           name: _nameController.text,
         );
-        showToast(value);
-        // Use the captured context after the async operation
         if (!mounted) return;
-        Navigator.pop(localContext); // Close the progress dialog
-        showToast(value);
+        Navigator.pop(context); // Close the progress dialog
+        showSnackBar(context, value);
       } catch (e) {
         if (!mounted) return;
-        Navigator.pop(localContext); // Close the progress dialog
-        showToast('An error occurred. Please try again.');
+        Navigator.pop(context); // Close the progress dialog
+        showSnackBar(context, 'An error occurred. Please try again.');
+      }
+    }
+  }
+
+  void signInUser() async {
+    if (_signInFormKey.currentState!.validate()) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(child: CircularProgressIndicator()),
+      );
+
+      // Retrieve the userProvider from the root of the widget tree
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+      try {
+        final value = await authService.signInUser(
+          email: _emailController.text,
+          password: _passwordController.text,
+          onTokenReceived: (responseBody) async {
+            await storage.write(key: 'x-auth-token', value: jsonDecode(responseBody)['token']);
+
+            // Use the userProvider here to set the user
+            userProvider.setUser(responseBody);
+          },
+        );
+
+        if (!mounted) return;
+        Navigator.pop(context); // Close the progress dialog
+        showSnackBar(context, value);
+        Navigator.pushNamedAndRemoveUntil(context, HomeScreen.routeName, (route) => false); // Navigate to the home screen (and remove the auth screen from the stack
+      } catch (e) {
+        if (!mounted) return;
+        Navigator.pop(context); // Close the progress dialog
+        showSnackBar(context, 'An error occurred. Please try again.');
       }
     }
   }
@@ -129,6 +173,11 @@ class _AuthScreenState extends State<AuthScreen> {
                             controller: _passwordController,
                             hintText: "Enter your password",
                             labelText: "Password",
+                            obscureText: !_isPasswordVisible,
+                            suffixIcon: IconButton(
+                              icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off),
+                              onPressed: _togglePasswordVisibility,
+                            ),
                           ),
                           const SizedBox(height: 10),
                           CustomButton(
@@ -172,13 +221,18 @@ class _AuthScreenState extends State<AuthScreen> {
                             controller: _passwordController,
                             hintText: 'Enter your password',
                             labelText: 'Password',
+                            obscureText: !_isPasswordVisible,
+                            suffixIcon: IconButton(
+                              icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off),
+                              onPressed: _togglePasswordVisibility,
+                            ),
                           ),
                           const SizedBox(height: 10),
                           CustomButton(
                             color: GlobalVariables.secondaryColor,
                             text: 'Sign In',
                             onTap: () {
-                              //TODO: Perfom Validation using signInFormKey
+                              signInUser();
                             },
                           )
                         ],

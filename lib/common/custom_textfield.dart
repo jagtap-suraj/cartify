@@ -6,8 +6,10 @@ class CustomTextField extends StatelessWidget {
   final String labelText;
   final String hintText;
   final bool isEmail;
+  final bool obscureText; // To hide the password
+  final Widget? suffixIcon;
 
-  const CustomTextField({super.key, required this.controller, required this.labelText, required this.hintText, this.isEmail = false});
+  const CustomTextField({super.key, required this.controller, required this.labelText, required this.hintText, this.isEmail = false, this.obscureText = false, this.suffixIcon});
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +18,8 @@ class CustomTextField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: labelText,
         hintText: hintText,
+        suffixIcon: suffixIcon,
+        // Other decoration properties
         border: const OutlineInputBorder(
           borderSide: BorderSide(
             color: Colors.black38,
@@ -27,6 +31,8 @@ class CustomTextField extends StatelessWidget {
           ),
         ),
       ),
+      keyboardType: isEmail ? TextInputType.emailAddress : TextInputType.text,
+      obscureText: obscureText,
       validator: (val) {
         if (val == null || val.isEmpty) {
           return hintText;

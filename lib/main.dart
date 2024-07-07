@@ -1,12 +1,22 @@
 import 'package:cartify/constants/global_variables.dart';
 import 'package:cartify/features/auth/screens/auth_screen.dart';
+import 'package:cartify/providers/user_provider.dart';
 import 'package:cartify/router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
 
 Future main() async {
+  // This function is made async so that we can use the await keyword to load the .env file
   await dotenv.load(fileName: ".env");
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
