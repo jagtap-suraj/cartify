@@ -116,9 +116,9 @@ authRouter.post("/api/istokenvalid", async (req, res) => {
 
 // GET USER
 // GET USER
-authRouter.get("/", authMiddleware, async (req, res) => {
+authRouter.get("/api/user", authMiddleware, async (req, res) => {
   try {
-    const user = await User.findById(req.user);;
+    const user = await User.findById(req.user);
     // Combine the token and user document into a single response
     res.json({ token: req.token, ...user._doc });
   } catch (e) {

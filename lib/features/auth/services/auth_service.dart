@@ -1,123 +1,132 @@
 import 'dart:convert';
+import 'package:cartify/constants/api_urls.dart';
 import 'package:cartify/constants/error_handling.dart';
-import 'package:cartify/constants/global_variables.dart';
+import 'package:cartify/models/general_response.dart';
 import 'package:cartify/models/user.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService {
-  Future<String> signUpUser({
+  Future<Either<String, GeneralResponse<User>>> signUpUser({
     required String email,
     required String password,
     required String name,
   }) async {
-    try {
-      // Check internet connectivity
-      final List<ConnectivityResult> connectivityResult = await (Connectivity().checkConnectivity());
-      if (connectivityResult.isEmpty || connectivityResult[0] == ConnectivityResult.none) {
-        return 'No internet connection';
-      }
+    // Check internet connectivity
+    final List<ConnectivityResult> connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult.isEmpty || connectivityResult[0] == ConnectivityResult.none) {
+      return const Left('No internet connection');
+    }
 
-      User user = User(
-        id: '',
-        name: name,
-        password: password,
-        email: email,
-        address: '',
-        type: '',
-        token: '',
-      );
+    User user = User(
+      id: '',
+      name: name,
+      password: password,
+      email: email,
+      address: '',
+      type: '',
+      token: '',
+    );
 
-      http.Response res = await http.post(
-        Uri.parse('$uri/api/signup'),
-        body: user.toJson(),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
+    http.Response res = await http.post(
+      Uri.parse(signUpEndpoint),
+      body: user.toJson(),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    String? httpErrorHandlerResponse = httpErrorHandler(response: res);
+    if (httpErrorHandlerResponse != null) {
+      return Left(httpErrorHandlerResponse);
+    } else {
+      // httpErrorHandlerResponse will be null when status code is 200
+      return Right(
+        GeneralResponse<User>(
+          data: User.fromJson(res.body),
+        ),
       );
-      final httpErrorHandleResponse = httpErrorHandle(response: res);
-      if (httpErrorHandleResponse == null) {
-        return 'User created successfully';
-      } else {
-        return httpErrorHandleResponse;
-      }
-    } catch (e) {
-      return 'An error occurred. Please try again.';
     }
   }
 
-  Future<String> signInUser({
+  Future<Either<String, GeneralResponse<User>>> signInUser({
     required String email,
     required String password,
-    required Function(String) onTokenReceived, // A callback to store token in secure storage and user in provider
   }) async {
-    try {
-      // Check internet connectivity
-      final List<ConnectivityResult> connectivityResult = await (Connectivity().checkConnectivity());
-      if (connectivityResult.isEmpty || connectivityResult[0] == ConnectivityResult.none) {
-        return 'No internet connection';
-      }
+    // Check internet connectivity
+    final List<ConnectivityResult> connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult.isEmpty || connectivityResult[0] == ConnectivityResult.none) {
+      return const Left('No internet connection');
+    }
 
-      http.Response res = await http.post(
-        Uri.parse('$uri/api/signin'),
-        body: jsonEncode({
-          'email': email,
-          'password': password
-        }),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
+    http.Response res = await http.post(
+      Uri.parse(signInEndpoint),
+      body: jsonEncode({
+        'email': email,
+        'password': password,
+      }),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    String? httpErrorHandlerResponse = httpErrorHandler(response: res);
+    if (httpErrorHandlerResponse != null) {
+      return Left(httpErrorHandlerResponse);
+    } else {
+      // httpErrorHandlerResponse will be null when status code is 200
+      return Right(
+        GeneralResponse<User>(
+          data: User.fromJson(res.body),
+        ),
       );
-      final httpErrorHandleResponse = httpErrorHandle(response: res);
-      if (httpErrorHandleResponse == null) {
-        onTokenReceived(res.body);
-        const storage = FlutterSecureStorage();
-        await storage.write(key: 'x-auth-token', value: jsonDecode(res.body)['token']);
-
-        return 'logged in successfully';
-      } else {
-        return httpErrorHandleResponse;
-      }
-    } catch (e) {
-      return 'An error occured. Please try again later';
     }
   }
 
-  // Get user data
-  Future<String> getUserData({
-    // a callback to store user data in provider
-    required Function(String) onUserDataReceived,
+  Future<Either<String, GeneralResponse<User>>> getUser({
+    required String? token,
   }) async {
-    try {
-      const storage = FlutterSecureStorage();
-      final String? token = await storage.read(key: 'x-auth-token');
-      if (token == null) {
-        await storage.write(key: 'x-auth-token', value: '');
-        return 'Token not found';
-      }
-      var tokenRes = await http.post(Uri.parse('$uri/api/istokenvalid'), headers: <String, String>{
+    // Check internet connectivity
+    final List<ConnectivityResult> connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult.isEmpty || connectivityResult[0] == ConnectivityResult.none) {
+      //TODO: Implement a way to handle this error
+      return const Left('No internet connection');
+    }
+
+    if (token == null || token.isEmpty) {
+      return const Left('Token is invalid');
+    }
+    var tokenRes = await http.post(
+      Uri.parse(tokenValidationEndpoint),
+      headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'x-auth-token': token,
-      });
-      var response = jsonDecode(tokenRes.body);
-      if (response == false) {
-        return 'Token is invalid';
-      }
-      // get the user data
-      http.Response userRes = await http.get(Uri.parse('$uri/'), headers: <String, String>{
+      },
+    );
+    var response = jsonDecode(tokenRes.body);
+    if (response == false) {
+      return const Left('Token is invalid');
+    }
+    // get the user data
+    http.Response userRes = await http.get(
+      Uri.parse(getUserEndpoint),
+      headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'x-auth-token': token,
-      });
-      final httpErrorHandleResponse = httpErrorHandle(response: userRes);
-      if (httpErrorHandleResponse == null) {
-        onUserDataReceived(userRes.body);
-        return 'User data received successfully';
-      } else {
-        return httpErrorHandleResponse;
-      }
-    } catch (e) {
-      return 'An error occured. Please try again later';
+      },
+    );
+    String? httpErrorHandlerResponse = httpErrorHandler(response: userRes);
+    if (httpErrorHandlerResponse != null) {
+      return Left(httpErrorHandlerResponse);
+    } else {
+      // httpErrorHandlerResponse will be null when status code is 200
+      return Right(
+        GeneralResponse<User>(
+          data: User.fromJson(userRes.body),
+        ),
+      );
     }
   }
 }

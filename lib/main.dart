@@ -1,11 +1,12 @@
+import 'package:cartify/constants/app_strings.dart';
 import 'package:cartify/constants/global_variables.dart';
 import 'package:cartify/features/auth/screens/auth_screen.dart';
 import 'package:cartify/features/auth/screens/home_screen.dart';
 import 'package:cartify/features/auth/services/auth_service.dart';
 import 'package:cartify/providers/user_provider.dart';
-import 'package:cartify/router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 
 Future main() async {
@@ -38,37 +39,41 @@ class _MyAppState extends State<MyApp> {
     initializeUserData();
   }
 
+  void _toggleLoading() {
+    setState(() {
+      _isLoading = !_isLoading;
+    });
+  }
+
   void initializeUserData() async {
-    // Make this method async
     try {
-      await _authService.getUserData(
-        // Await the getUserData call
-        onUserDataReceived: (userData) {
-          Provider.of<UserProvider>(context, listen: false).setUser(userData);
-          setState(() {
-            _isLoading = false; // Set loading to false once data is received
-          });
+      const storage = FlutterSecureStorage();
+      final String? token = await storage.read(key: 'x-auth-token');
+      final getUserDataResult = await _authService.getUser(token: token);
+      getUserDataResult.fold(
+        (left) async => {
+          await storage.write(key: 'x-auth-token', value: ''),
+        },
+        (right) => {
+          Provider.of<UserProvider>(context, listen: false).setUser(right.data!),
         },
       );
     } catch (e) {
       // If an error occurs while fetching user data, log the error and do nothing
-      setState(() {
-        _isLoading = false; // Ensure loading is set to false even on error
-      });
     }
+    _toggleLoading();
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Cartify',
+      title: AppStrings.appTitle,
       theme: ThemeData(
         colorScheme: const ColorScheme.light(primary: GlobalVariables.secondaryColor),
         scaffoldBackgroundColor: GlobalVariables.backgroundColor,
         appBarTheme: const AppBarTheme(elevation: 0, iconTheme: IconThemeData(color: Colors.black)),
         useMaterial3: true,
       ),
-      onGenerateRoute: (settings) => generateRoute(settings),
       home: _isLoading // Check if loading
           ? const Scaffold(
               body: Center(

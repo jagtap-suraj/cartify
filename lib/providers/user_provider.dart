@@ -17,8 +17,8 @@ class UserProvider extends ChangeNotifier {
 
   /// We are going to pass response.body to this method, which is a string, so we are converting it to a User object.
   /// Then, we are setting the User object to the _user variable and calling the notifyListeners() method to update all the listeners.
-  void setUser(String user) {
-    _user = User.fromJson(user);
+  void setUser(User user) {
+    _user = user;
     notifyListeners();
   }
 }

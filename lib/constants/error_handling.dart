@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-String? httpErrorHandle({
+String? httpErrorHandler({
   required http.Response response,
 }) {
   if (response.statusCode == 200) {

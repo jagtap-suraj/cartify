@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   //TODO: Implement token retrieval
-  static const String routeName = "/home-screen";
   const HomeScreen({super.key});
 
   @override
