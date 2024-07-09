@@ -1,3 +1,4 @@
+import 'package:cartify/common/widgets/custom_bottom_navigation_bar.dart';
 import 'package:cartify/constants/app_strings.dart';
 import 'package:cartify/features/auth/screens/auth_screen.dart';
 import 'package:cartify/features/auth/screens/home_screen.dart';
@@ -5,8 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 enum AppRoute {
-  homeScreen('/home', 'homeScreen'),
-  authScreen('/', 'authScreen');
+  homeScreen('/home-screen', 'homeScreen'),
+  authScreen('/auth-screen', 'authScreen'),
+  customBottomNavigationBar('/bottom-navigation-bar', 'bottomNavigationBar');
 
   final String path;
   final String name;
@@ -15,7 +17,7 @@ enum AppRoute {
 }
 
 final goRouter = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/auth-screen',
   debugLogDiagnostics: true,
   routes: [
     GoRoute(
@@ -27,6 +29,11 @@ final goRouter = GoRouter(
       path: AppRoute.homeScreen.path,
       name: AppRoute.homeScreen.name,
       builder: (context, state) => const HomeScreen(),
+    ),
+    GoRoute(
+      path: AppRoute.customBottomNavigationBar.path,
+      name: AppRoute.customBottomNavigationBar.name,
+      builder: (context, state) => const CustomBottomNavigationBar(),
     )
   ],
   errorBuilder: (context, state) => const Scaffold(

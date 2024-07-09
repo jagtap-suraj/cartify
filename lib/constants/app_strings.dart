@@ -15,10 +15,14 @@ class AppStrings {
 
   // Error Messages
   static const genericErrorMessage = 'An error occurred. Please try again.';
+  static const noInternetConnection = 'No internet connection';
+  static const tokenIsInvalid = 'Token is invalid';
+  static const validationErrorOccurred = 'Validation error occurred';
 
   // Form Fields
   static const enterYourName = 'Enter your name';
   static const enterYourEmail = 'Enter your email';
+  static const enterAValidEmailAddress = 'Please enter a valid email address';
   static const enterYourPassword = 'Enter your password';
   static const name = 'Name';
   static const email = 'Email';

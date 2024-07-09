@@ -1,5 +1,5 @@
-import 'package:cartify/common/custom_button.dart';
-import 'package:cartify/common/custom_textfield.dart';
+import 'package:cartify/common/widgets/custom_button.dart';
+import 'package:cartify/common/widgets/custom_textfield.dart';
 import 'package:cartify/constants/app_strings.dart';
 import 'package:cartify/constants/global_variables.dart';
 import 'package:cartify/constants/utils.dart';
@@ -93,11 +93,12 @@ class _AuthScreenState extends State<AuthScreen> {
           (left) => {
             showSnackBar(context, left),
           },
-          (right) {
+          (right) async {
             showSnackBar(context, AppStrings.userSignInSuccess);
-            storage.write(key: 'x-auth-token', value: right.data!.token);
-            userProvider.setUser(right.data!);
-            context.goNamed(AppRoute.homeScreen.name);
+            storage.write(key: 'x-auth-token', value: right.token);
+            userProvider.setUser(right);
+            if (!mounted) return;
+            context.goNamed(AppRoute.customBottomNavigationBar.name);
           },
         );
       } catch (e) {

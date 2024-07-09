@@ -1,3 +1,4 @@
+import 'package:cartify/constants/app_strings.dart';
 import 'package:cartify/constants/global_variables.dart';
 import 'package:flutter/material.dart';
 
@@ -38,7 +39,7 @@ class CustomTextField extends StatelessWidget {
           return hintText;
         }
         if (isEmail && !emailRegex.hasMatch(val)) {
-          return 'Please enter a valid email address';
+          return AppStrings.enterAValidEmailAddress;
         }
         return null;
       },

@@ -1,3 +1,4 @@
+import 'package:cartify/common/widgets/custom_bottom_navigation_bar.dart';
 import 'package:cartify/constants/app_strings.dart';
 import 'package:cartify/constants/global_variables.dart';
 import 'package:cartify/features/auth/screens/auth_screen.dart';
@@ -8,8 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 
 Future main() async {
+  // turn off the # in the URLs on the web
+  usePathUrlStrategy();
   // This function is made async so that we can use the await keyword to load the .env file
   await dotenv.load(fileName: ".env");
   runApp(
@@ -36,6 +40,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    //clear the user token from storage
     initializeUserData();
   }
 
@@ -55,7 +60,7 @@ class _MyAppState extends State<MyApp> {
           await storage.write(key: 'x-auth-token', value: ''),
         },
         (right) => {
-          Provider.of<UserProvider>(context, listen: false).setUser(right.data!),
+          Provider.of<UserProvider>(context, listen: false).setUser(right),
         },
       );
     } catch (e) {
@@ -73,6 +78,8 @@ class _MyAppState extends State<MyApp> {
         scaffoldBackgroundColor: GlobalVariables.backgroundColor,
         appBarTheme: const AppBarTheme(elevation: 0, iconTheme: IconThemeData(color: Colors.black)),
         useMaterial3: true,
+        // disable the ripple effect on the buttons
+        splashFactory: NoSplash.splashFactory,
       ),
       home: _isLoading // Check if loading
           ? const Scaffold(
@@ -81,7 +88,7 @@ class _MyAppState extends State<MyApp> {
               ),
             )
           : Provider.of<UserProvider>(context).user.token.isNotEmpty
-              ? const HomeScreen()
+              ? const CustomBottomNavigationBar()
               : const AuthScreen(),
     );
   }

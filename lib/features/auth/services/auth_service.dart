@@ -1,15 +1,15 @@
 import 'dart:convert';
+
 import 'package:cartify/constants/api_urls.dart';
+import 'package:cartify/constants/app_strings.dart';
 import 'package:cartify/constants/error_handling.dart';
-import 'package:cartify/models/general_response.dart';
 import 'package:cartify/models/user.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dartz/dartz.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService {
-  Future<Either<String, GeneralResponse<User>>> signUpUser({
+  Future<Either<String, User>> signUpUser({
     required String email,
     required String password,
     required String name,
@@ -17,7 +17,7 @@ class AuthService {
     // Check internet connectivity
     final List<ConnectivityResult> connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult.isEmpty || connectivityResult[0] == ConnectivityResult.none) {
-      return const Left('No internet connection');
+      return const Left(AppStrings.noInternetConnection);
     }
 
     User user = User(
@@ -44,21 +44,19 @@ class AuthService {
     } else {
       // httpErrorHandlerResponse will be null when status code is 200
       return Right(
-        GeneralResponse<User>(
-          data: User.fromJson(res.body),
-        ),
+        User.fromJson(res.body),
       );
     }
   }
 
-  Future<Either<String, GeneralResponse<User>>> signInUser({
+  Future<Either<String, User>> signInUser({
     required String email,
     required String password,
   }) async {
     // Check internet connectivity
     final List<ConnectivityResult> connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult.isEmpty || connectivityResult[0] == ConnectivityResult.none) {
-      return const Left('No internet connection');
+      return const Left(AppStrings.noInternetConnection);
     }
 
     http.Response res = await http.post(
@@ -78,25 +76,23 @@ class AuthService {
     } else {
       // httpErrorHandlerResponse will be null when status code is 200
       return Right(
-        GeneralResponse<User>(
-          data: User.fromJson(res.body),
-        ),
+        User.fromJson(res.body),
       );
     }
   }
 
-  Future<Either<String, GeneralResponse<User>>> getUser({
+  Future<Either<String, User>> getUser({
     required String? token,
   }) async {
     // Check internet connectivity
     final List<ConnectivityResult> connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult.isEmpty || connectivityResult[0] == ConnectivityResult.none) {
       //TODO: Implement a way to handle this error
-      return const Left('No internet connection');
+      return const Left(AppStrings.noInternetConnection);
     }
 
     if (token == null || token.isEmpty) {
-      return const Left('Token is invalid');
+      return const Left(AppStrings.tokenIsInvalid);
     }
     var tokenRes = await http.post(
       Uri.parse(tokenValidationEndpoint),
@@ -107,7 +103,7 @@ class AuthService {
     );
     var response = jsonDecode(tokenRes.body);
     if (response == false) {
-      return const Left('Token is invalid');
+      return const Left(AppStrings.tokenIsInvalid);
     }
     // get the user data
     http.Response userRes = await http.get(
@@ -123,9 +119,7 @@ class AuthService {
     } else {
       // httpErrorHandlerResponse will be null when status code is 200
       return Right(
-        GeneralResponse<User>(
-          data: User.fromJson(userRes.body),
-        ),
+        User.fromJson(userRes.body),
       );
     }
   }
