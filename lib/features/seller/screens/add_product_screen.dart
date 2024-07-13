@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cartify/common/widgets/custom_button.dart';
 import 'package:cartify/common/widgets/custom_textfield.dart';
+import 'package:cartify/common/widgets/loader.dart';
 import 'package:cartify/constants/app_strings.dart';
 import 'package:cartify/constants/global_variables.dart';
 import 'package:cartify/constants/utils.dart';
@@ -75,10 +76,16 @@ class _AddProductScreenState extends State<AddProductScreen> {
         if (!mounted) return;
         res.fold(
           (left) => {
-            showSnackBar(context, left),
+            showSnackBar(context, left)
           },
-          (right) {
-            showSnackBar(context, AppStrings.productAddedSuccessfully);
+          (right) => {
+            _addProductFormKey.currentState!.reset(),
+            setState(() {
+              images = [];
+              category = null;
+              // Reset any other state variables if necessary
+            }),
+            showSnackBar(context, AppStrings.productAddedSuccessfully)
           },
         );
       } catch (e) {
@@ -127,9 +134,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
         ),
       ),
       body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
+          ? const Loader()
           : SingleChildScrollView(
               child: Form(
                 key: _addProductFormKey,

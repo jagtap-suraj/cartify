@@ -21,4 +21,5 @@ class ApiUrls {
 
   // Seller APIs
   static String addProductEndpoint = '$baseUri/seller/add-product';
+  static String getSellerProductsEndpoint = '$baseUri/seller/products';
 }

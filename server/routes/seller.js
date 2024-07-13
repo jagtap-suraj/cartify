@@ -47,4 +47,29 @@ sellerRouter.post("/seller/add-product", sellerMiddleware, async (req, res) => {
   }
 });
 
+// Define Joi validation schema for sellerId
+const sellerIdSchema = Joi.object({
+  sellerId: Joi.string().required(),
+});
+
+// Get all products of a specific seller with Joi validation for sellerId
+sellerRouter.get("/seller/products", sellerMiddleware, async (req, res) => {
+  // Validate sellerId from query
+  const { error } = sellerIdSchema.validate(req.query);
+  if (error) {
+    return res.status(422).json({ errors: error.details });
+  }
+
+  const { sellerId } = req.query;
+  try {
+    const products = await Product.find({ sellerId: sellerId });
+    res.json(products);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({
+      error: "An unexpected error occurred. Please try again later.",
+    });
+  }
+});
+
 export default sellerRouter;
