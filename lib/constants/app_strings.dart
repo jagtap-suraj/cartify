@@ -60,4 +60,6 @@ class AppStrings {
   static const selectACategory = 'Select a category';
   static const productAddedSuccessfully = 'Product added successfully';
   static const productsFetchedSuccessfully = 'Products fetched successfully';
+  static const noProductsFound = 'No products found';
+  static const productDeletedSuccessfully = 'Product deleted successfully';
 }

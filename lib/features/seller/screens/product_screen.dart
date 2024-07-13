@@ -60,6 +60,37 @@ class _ProductScreenState extends State<ProductScreen> {
     }
   }
 
+  void deleteProduct(String productId) async {
+    try {
+      const storage = FlutterSecureStorage();
+      final String? token = await storage.read(key: 'x-auth-token');
+      final res = await sellerServices.deleteProduct(token: token!, productId: productId);
+      if (!mounted) return;
+      res.fold(
+        (left) => {
+          showSnackBar(context, left)
+        },
+        (right) => {
+          setState(() {
+            // Update the products List by removing the product with the matching productId.
+            // products = products!.where((product) => product.id != productId).toList();
+            // get the id from the right object and remove the product with that id
+            print("Sooraj productId: $productId");
+            print("Sooraj right.id: ${right.id}");
+            print("Sooraj right: $right");
+            products = products!.where((product) => product.id != right.id).toList();
+          }),
+          showSnackBar(context, AppStrings.productDeletedSuccessfully)
+        },
+      );
+    } catch (e) {
+      if (!mounted) return;
+      showSnackBar(context, AppStrings.genericErrorMessage);
+    } finally {
+      _toggleLoading();
+    }
+  }
+
   void navigateToAddProduct() {
     context.goNamed(AppRoute.addProductScreen.name);
   }
@@ -97,7 +128,9 @@ class _ProductScreenState extends State<ProductScreen> {
                             ),
                           ),
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              deleteProduct(productData.id!);
+                            },
                             icon: const Icon(
                               Icons.delete_outline,
                             ),

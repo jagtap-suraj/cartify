@@ -20,6 +20,6 @@ class ApiUrls {
   static String uploadPreset = dotenv.env['UPLOAD_PRESET']!;
 
   // Seller APIs
-  static String addProductEndpoint = '$baseUri/seller/add-product';
-  static String getSellerProductsEndpoint = '$baseUri/seller/products';
+  static String sellerProductsEndpoint = '$baseUri/seller/products';
+  static String sellerProductEndpoint = '$baseUri/seller/product';
 }

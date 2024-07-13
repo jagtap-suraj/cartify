@@ -17,7 +17,7 @@ const addProductSchema = Joi.object({
 });
 
 // Add Product
-sellerRouter.post("/seller/add-product", sellerMiddleware, async (req, res) => {
+sellerRouter.post("/seller/product", sellerMiddleware, async (req, res) => {
   // Validate request body against schema
   const { error } = addProductSchema.validate(req.body);
   if (error) {
@@ -64,6 +64,26 @@ sellerRouter.get("/seller/products", sellerMiddleware, async (req, res) => {
   try {
     const products = await Product.find({ sellerId: sellerId });
     res.json(products);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({
+      error: "An unexpected error occurred. Please try again later.",
+    });
+  }
+});
+
+const deleteProductSchema = Joi.object({
+  productId: Joi.string().required(),
+});
+// Delete a particular product of a particular seller
+sellerRouter.delete("/seller/product", sellerMiddleware, async (req, res) => {
+  const { productId } = req.query;
+  try {
+    let product = await Product.findByIdAndDelete(productId);
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+    res.json(product);
   } catch (e) {
     console.error(e);
     res.status(500).json({

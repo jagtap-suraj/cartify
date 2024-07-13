@@ -10,6 +10,7 @@ import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
 
 class SellerServices {
+  /// This function is used to add a product to the database.
   Future<Either<String, Product>> addProduct({
     required String name,
     required String description,
@@ -46,7 +47,7 @@ class SellerServices {
     );
 
     http.Response res = await http.post(
-      Uri.parse(ApiUrls.addProductEndpoint),
+      Uri.parse(ApiUrls.sellerProductEndpoint),
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
         'x-auth-token': token,
@@ -63,15 +64,15 @@ class SellerServices {
     }
   }
 
+  /// This function is used to fetch all the products of a particular seller.
   Future<Either<String, List<Product>>> fetchSellerProducts({
     required String sellerId,
     required String token,
   }) async {
     // Construct the URL with query parameters
-    Uri url = Uri.parse(ApiUrls.getSellerProductsEndpoint).replace(queryParameters: {
+    Uri url = Uri.parse(ApiUrls.sellerProductsEndpoint).replace(queryParameters: {
       'sellerId': sellerId,
     });
-    print("sooraj url: $url");
     http.Response res = await http.get(
       url, // Use the modified URL with query parameters
       headers: {
@@ -99,6 +100,31 @@ class SellerServices {
         );
       }
       return Right(productList);
+    }
+  }
+
+  /// This function is used to delete a product from the database.
+  Future<Either<String, Product>> deleteProduct({
+    required String productId,
+    required String token,
+  }) async {
+    Uri url = Uri.parse(ApiUrls.sellerProductEndpoint).replace(queryParameters: {
+      'productId': productId,
+    });
+    http.Response res = await http.delete(
+      url,
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'x-auth-token': token,
+      },
+    );
+    String? httpErrorHandlerResponse = httpErrorHandler(response: res);
+    if (httpErrorHandlerResponse != null) {
+      return Left(httpErrorHandlerResponse);
+    } else {
+      return Right(
+        Product.fromJson(res.body),
+      );
     }
   }
 }

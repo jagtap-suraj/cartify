@@ -16,6 +16,9 @@ const sellerMiddleware = async (req, res, next) => {
         .json({ msg: "Token verification failed, authorization denied." });
     }
     const user = await User.findById(isVerified.id);
+    if (!user) {
+      return res.status(401).json({ msg: "User does not exist" });
+    }
     if (user.type !== "seller" && user.type !== "admin") {
       return res
         .status(401)
