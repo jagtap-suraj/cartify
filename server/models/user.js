@@ -28,7 +28,7 @@ const userSchema = Schema({
   },
   type: {
     type: String,
-    default: "User",
+    default: "user",
   },
 });
 

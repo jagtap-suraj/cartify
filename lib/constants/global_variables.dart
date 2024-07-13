@@ -37,6 +37,7 @@ class GlobalVariables {
   static const greyColor = Colors.grey;
   static const whiteColor = Colors.white;
   static const cyanColor = Colors.cyan;
+  static const floatingActionButtonColor = Color.fromARGB(255, 29, 201, 192);
 
   // STATIC IMAGES
   static const List<String> carouselImages = [
@@ -68,5 +69,14 @@ class GlobalVariables {
       'title': 'Fashion',
       'image': 'assets/images/fashion.jpeg',
     },
+  ];
+
+  static const List<String> productCategories = [
+    'Mobiles',
+    'Essentials',
+    'Appliances',
+    'Books',
+    'Fashion',
+    'Miscellaneous',
   ];
 }

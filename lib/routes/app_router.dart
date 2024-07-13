@@ -1,14 +1,27 @@
 import 'package:cartify/common/widgets/custom_bottom_navigation_bar.dart';
 import 'package:cartify/constants/app_strings.dart';
+import 'package:cartify/features/account/screens/account_screen.dart';
+import 'package:cartify/features/admin/screens/add_product_screen.dart';
+import 'package:cartify/features/admin/screens/admin_screen.dart';
+import 'package:cartify/features/admin/screens/product_screen.dart';
 import 'package:cartify/features/auth/screens/auth_screen.dart';
 import 'package:cartify/features/home/screens/home_screen.dart';
+import 'package:cartify/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 enum AppRoute {
-  homeScreen('/home-screen', 'homeScreen'),
-  authScreen('/auth-screen', 'authScreen'),
-  customBottomNavigationBar('/bottom-navigation-bar', 'bottomNavigationBar');
+  // Initial Screens
+  splashScreen('/', 'splashScreen'),
+  customBottomNavigationBar('bottom-navigation-bar', 'bottomNavigationBar'),
+  homeScreen('home-screen', 'homeScreen'),
+  accountScreen('account-screen', 'accountScreen'),
+  authScreen('auth-screen', 'authScreen'),
+
+  // Admin Screens
+  adminScreen('/admin-screen', 'adminScreen'),
+  productScreen('product-screen', 'productScreen'),
+  addProductScreen('add-product-screen', 'addProductScreen');
 
   final String path;
   final String name;
@@ -17,23 +30,52 @@ enum AppRoute {
 }
 
 final goRouter = GoRouter(
-  initialLocation: '/auth-screen',
+  initialLocation: '/',
   debugLogDiagnostics: true,
   routes: [
+    // Initial Routes
     GoRoute(
-      path: AppRoute.authScreen.path,
-      name: AppRoute.authScreen.name,
-      builder: (context, state) => const AuthScreen(),
+      path: AppRoute.splashScreen.path,
+      name: AppRoute.splashScreen.name,
+      builder: (context, state) => const SplashScreen(),
+      routes: [
+        GoRoute(
+          path: AppRoute.authScreen.path,
+          name: AppRoute.authScreen.name,
+          builder: (context, state) => const AuthScreen(),
+        ),
+        GoRoute(path: AppRoute.customBottomNavigationBar.path, name: AppRoute.customBottomNavigationBar.name, builder: (context, state) => const CustomBottomNavigationBar(), routes: [
+          GoRoute(
+            path: AppRoute.homeScreen.path,
+            name: AppRoute.homeScreen.name,
+            builder: (context, state) => const HomeScreen(),
+          ),
+          GoRoute(
+            path: AppRoute.accountScreen.path,
+            name: AppRoute.accountScreen.name,
+            builder: (context, state) => const AccountScreen(),
+          ),
+        ]),
+      ],
     ),
+
+    // Admin Routes
     GoRoute(
-      path: AppRoute.homeScreen.path,
-      name: AppRoute.homeScreen.name,
-      builder: (context, state) => const HomeScreen(),
-    ),
-    GoRoute(
-      path: AppRoute.customBottomNavigationBar.path,
-      name: AppRoute.customBottomNavigationBar.name,
-      builder: (context, state) => const CustomBottomNavigationBar(),
+      path: AppRoute.adminScreen.path,
+      name: AppRoute.adminScreen.name,
+      builder: (context, state) => const AdminScreen(),
+      routes: [
+        GoRoute(
+          path: AppRoute.productScreen.path,
+          name: AppRoute.productScreen.name,
+          builder: (context, state) => const ProductScreen(),
+        ),
+        GoRoute(
+          path: AppRoute.addProductScreen.path,
+          name: AppRoute.addProductScreen.name,
+          builder: (context, state) => const AddProductScreen(),
+        ),
+      ],
     )
   ],
   errorBuilder: (context, state) => const Scaffold(

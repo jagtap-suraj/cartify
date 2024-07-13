@@ -18,6 +18,7 @@ class AppStrings {
   static const noInternetConnection = 'No internet connection';
   static const tokenIsInvalid = 'Token is invalid';
   static const validationErrorOccurred = 'Validation error occurred';
+  static const errorInPickImage = 'Error in picking image';
 
   // Form Fields
   static const enterYourName = 'Enter your name';
@@ -41,4 +42,20 @@ class AppStrings {
   static const searchCartify = 'Search Cartify';
   static const dealOfTheDay = 'Deal of the Day';
   static const seeAllDeals = 'See all deals';
+
+  // Admin Screen
+  static const admin = 'Admin';
+  static const post = 'Post';
+  static const analytics = 'Analytics';
+  static const orders = 'Orders';
+
+  // Product Screen
+  static const addProduct = 'Add Product';
+  static const selectProductImages = 'Select Product Images';
+  static const productName = 'Product Name';
+  static const productDescription = 'Product Description';
+  static const productPrice = 'Product Price';
+  static const productQuantity = 'Product Quantity';
+  static const sell = 'Sell';
+  static const selectACategory = 'Select a category';
 }

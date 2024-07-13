@@ -4,20 +4,27 @@ import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
-  final String labelText;
   final String hintText;
   final bool isEmail;
   final bool obscureText; // To hide the password
   final Widget? suffixIcon;
+  final int maxLines;
 
-  const CustomTextField({super.key, required this.controller, required this.labelText, required this.hintText, this.isEmail = false, this.obscureText = false, this.suffixIcon});
+  const CustomTextField({
+    super.key,
+    required this.controller,
+    required this.hintText,
+    this.isEmail = false,
+    this.obscureText = false,
+    this.suffixIcon,
+    this.maxLines = 1, // For Product Description
+  });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
-        labelText: labelText,
         hintText: hintText,
         suffixIcon: suffixIcon,
         // Other decoration properties

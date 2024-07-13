@@ -98,7 +98,11 @@ class _AuthScreenState extends State<AuthScreen> {
             storage.write(key: 'x-auth-token', value: right.token);
             userProvider.setUser(right);
             if (!mounted) return;
-            context.goNamed(AppRoute.customBottomNavigationBar.name);
+            if (userProvider.user.type == 'admin') {
+              context.goNamed(AppRoute.adminScreen.name);
+            } else {
+              context.goNamed(AppRoute.customBottomNavigationBar.name);
+            }
           },
         );
       } catch (e) {
@@ -164,20 +168,17 @@ class _AuthScreenState extends State<AuthScreen> {
                                 CustomTextField(
                                   controller: _nameController,
                                   hintText: AppStrings.enterYourName,
-                                  labelText: AppStrings.name,
                                 ),
                                 const SizedBox(height: 10),
                                 CustomTextField(
                                   controller: _emailController,
                                   hintText: AppStrings.enterYourEmail,
-                                  labelText: AppStrings.email,
                                   isEmail: true,
                                 ),
                                 const SizedBox(height: 10),
                                 CustomTextField(
                                   controller: _passwordController,
                                   hintText: AppStrings.enterYourPassword,
-                                  labelText: AppStrings.password,
                                   obscureText: !_isPasswordVisible,
                                   suffixIcon: IconButton(
                                     icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off),
@@ -219,14 +220,12 @@ class _AuthScreenState extends State<AuthScreen> {
                                 CustomTextField(
                                   controller: _emailController,
                                   hintText: AppStrings.enterYourEmail,
-                                  labelText: AppStrings.email,
                                   isEmail: true,
                                 ),
                                 const SizedBox(height: 10),
                                 CustomTextField(
                                   controller: _passwordController,
                                   hintText: AppStrings.enterYourPassword,
-                                  labelText: AppStrings.password,
                                   obscureText: !_isPasswordVisible,
                                   suffixIcon: IconButton(
                                     icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off),
