@@ -21,6 +21,10 @@ class GlobalVariables {
   static const Color greyBackgroundColor = Color(0xffebecee);
   static var selectedNavBarColor = Colors.cyan[800]!;
   static const unselectedNavBarColor = Colors.black87;
+  static const blackColor = Colors.black;
+  static const black12Color = Colors.black12;
+  static const greyColor = Colors.grey;
+  static const whiteColor = Colors.white;
 
   // STATIC IMAGES
   static const List<String> carouselImages = [

@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 
 Future main() async {
-  // turn off the # in the URLs on the web
+  // Furn off the # in the URLs on the web
   usePathUrlStrategy();
   // This function is made async so that we can use the await keyword to load the .env file
   await dotenv.load(fileName: ".env");

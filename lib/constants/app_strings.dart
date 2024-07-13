@@ -27,4 +27,12 @@ class AppStrings {
   static const name = 'Name';
   static const email = 'Email';
   static const password = 'Password';
+
+  // Account Screen
+  static const hello = 'Hello, ';
+  static const yourOrders = 'Your Orders';
+  static const seeAll = 'See all';
+  static const turnSeller = 'Turn Seller';
+  static const yourWishList = 'Your Wish List';
+  static const logOut = 'Log Out';
 }
