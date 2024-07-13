@@ -2,7 +2,7 @@ import 'package:cartify/common/widgets/custom_bottom_navigation_bar.dart';
 import 'package:cartify/constants/app_strings.dart';
 import 'package:cartify/constants/global_variables.dart';
 import 'package:cartify/features/auth/screens/auth_screen.dart';
-import 'package:cartify/features/auth/screens/home_screen.dart';
+import 'package:cartify/features/home/screens/home_screen.dart';
 import 'package:cartify/features/auth/services/auth_service.dart';
 import 'package:cartify/providers/user_provider.dart';
 import 'package:flutter/material.dart';

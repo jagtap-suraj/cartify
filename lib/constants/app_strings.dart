@@ -35,4 +35,10 @@ class AppStrings {
   static const turnSeller = 'Turn Seller';
   static const yourWishList = 'Your Wish List';
   static const logOut = 'Log Out';
+
+  // Home Screen
+  static const home = 'Home';
+  static const searchCartify = 'Search Cartify';
+  static const dealOfTheDay = 'Deal of the Day';
+  static const seeAllDeals = 'See all deals';
 }

@@ -2,7 +2,7 @@ import 'package:badges/badges.dart' as badges;
 import 'package:cartify/features/account/screens/account_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cartify/constants/global_variables.dart';
-import 'package:cartify/features/auth/screens/home_screen.dart';
+import 'package:cartify/features/home/screens/home_screen.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   const CustomBottomNavigationBar({super.key});
