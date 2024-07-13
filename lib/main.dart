@@ -1,7 +1,7 @@
 import 'package:cartify/common/widgets/custom_bottom_navigation_bar.dart';
 import 'package:cartify/constants/app_strings.dart';
 import 'package:cartify/constants/global_variables.dart';
-import 'package:cartify/features/admin/screens/admin_screen.dart';
+import 'package:cartify/features/seller/screens/seller_screen.dart';
 import 'package:cartify/features/auth/screens/auth_screen.dart';
 import 'package:cartify/features/auth/services/auth_service.dart';
 import 'package:cartify/providers/user_provider.dart';
@@ -43,7 +43,7 @@ class _MyAppState extends State<MyApp> {
       routerConfig: goRouter,
       title: AppStrings.appTitle,
       theme: ThemeData(
-        colorScheme: const ColorScheme.light(primary: GlobalVariables.secondaryColor),
+        colorScheme: const ColorScheme.light(primary: GlobalVariables.primaryColor),
         scaffoldBackgroundColor: GlobalVariables.backgroundColor,
         appBarTheme: const AppBarTheme(elevation: 0, iconTheme: IconThemeData(color: Colors.black)),
         useMaterial3: true,

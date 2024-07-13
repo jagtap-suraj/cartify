@@ -26,6 +26,7 @@ class GlobalVariables {
     ],
   );
 
+  static const primaryColor = Color.fromARGB(255, 29, 201, 192);
   static const secondaryColor = Color.fromRGBO(255, 153, 0, 1);
   static const backgroundColor = Colors.white;
   static const Color greyBackgroundColor = Color(0xffebecee);
@@ -79,4 +80,20 @@ class GlobalVariables {
     'Fashion',
     'Miscellaneous',
   ];
+}
+
+enum TextFieldType {
+  text,
+  email,
+  password
+}
+
+//TODO: use enum in backend and frontend
+enum ProductType {
+  mobile,
+  essential,
+  appliance,
+  book,
+  fashion,
+  miscellaneous
 }

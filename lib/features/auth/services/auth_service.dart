@@ -21,17 +21,13 @@ class AuthService {
     }
 
     User user = User(
-      id: '',
       name: name,
       password: password,
       email: email,
-      address: '',
-      type: '',
-      token: '',
     );
 
     http.Response res = await http.post(
-      Uri.parse(signUpEndpoint),
+      Uri.parse(ApiUrls.signUpEndpoint),
       body: user.toJson(),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
@@ -60,7 +56,7 @@ class AuthService {
     }
 
     http.Response res = await http.post(
-      Uri.parse(signInEndpoint),
+      Uri.parse(ApiUrls.signInEndpoint),
       body: jsonEncode({
         'email': email,
         'password': password,
@@ -95,7 +91,7 @@ class AuthService {
       return const Left(AppStrings.tokenIsInvalid);
     }
     var tokenRes = await http.post(
-      Uri.parse(tokenValidationEndpoint),
+      Uri.parse(ApiUrls.tokenValidationEndpoint),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'x-auth-token': token,
@@ -107,7 +103,7 @@ class AuthService {
     }
     // get the user data
     http.Response userRes = await http.get(
-      Uri.parse(getUserEndpoint),
+      Uri.parse(ApiUrls.getUserEndpoint),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'x-auth-token': token,

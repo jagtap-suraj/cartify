@@ -50,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void _navigateBasedOnUserType() {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     if (userProvider.user.type == 'admin') {
-      GoRouter.of(context).goNamed(AppRoute.adminScreen.name);
+      GoRouter.of(context).goNamed(AppRoute.sellerScreen.name);
     } else {
       GoRouter.of(context).goNamed(AppRoute.customBottomNavigationBar.name);
     }

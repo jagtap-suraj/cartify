@@ -27,7 +27,6 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isLoading = false; // A loader to show while fetching user data
   AuthType _authType = AuthType.signUp;
   final AuthService authService = AuthService();
-  bool _isPasswordVisible = false;
   final storage = const FlutterSecureStorage();
 
   /// A global key used to uniquely identify the respective widget.
@@ -43,12 +42,6 @@ class _AuthScreenState extends State<AuthScreen> {
   void _toggleLoading() {
     setState(() {
       _isLoading = !_isLoading;
-    });
-  }
-
-  void _togglePasswordVisibility() {
-    setState(() {
-      _isPasswordVisible = !_isPasswordVisible;
     });
   }
 
@@ -98,8 +91,8 @@ class _AuthScreenState extends State<AuthScreen> {
             storage.write(key: 'x-auth-token', value: right.token);
             userProvider.setUser(right);
             if (!mounted) return;
-            if (userProvider.user.type == 'admin') {
-              context.goNamed(AppRoute.adminScreen.name);
+            if (userProvider.user.type == 'admin' || userProvider.user.type == 'seller') {
+              context.goNamed(AppRoute.sellerScreen.name);
             } else {
               context.goNamed(AppRoute.customBottomNavigationBar.name);
             }
@@ -132,119 +125,113 @@ class _AuthScreenState extends State<AuthScreen> {
             padding: const EdgeInsets.all(8.0),
             child: _isLoading
                 ? Center(child: CircularProgressIndicator())
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        AppStrings.welcomeMessage,
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      ListTile(
-                        tileColor: _authType == AuthType.signUp ? GlobalVariables.backgroundColor : null,
-                        title: const Text(
-                          AppStrings.createAccount,
-                          style: TextStyle(fontSize: 18),
-                        ),
-                        leading: Radio(
-                            value: AuthType.signUp,
-                            groupValue: _authType,
-                            onChanged: (value) {
-                              setState(() {
-                                _authType = value as AuthType;
-                              });
-                            }),
-                      ),
-                      if (_authType == AuthType.signUp)
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          color: GlobalVariables.backgroundColor,
-                          child: Form(
-                            key: _signUpFormKey,
-                            child: Column(
-                              children: [
-                                CustomTextField(
-                                  controller: _nameController,
-                                  hintText: AppStrings.enterYourName,
-                                ),
-                                const SizedBox(height: 10),
-                                CustomTextField(
-                                  controller: _emailController,
-                                  hintText: AppStrings.enterYourEmail,
-                                  isEmail: true,
-                                ),
-                                const SizedBox(height: 10),
-                                CustomTextField(
-                                  controller: _passwordController,
-                                  hintText: AppStrings.enterYourPassword,
-                                  obscureText: !_isPasswordVisible,
-                                  suffixIcon: IconButton(
-                                    icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off),
-                                    onPressed: _togglePasswordVisibility,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                CustomButton(
-                                  text: AppStrings.signUp,
-                                  onTap: () {
-                                    signUpUser();
-                                  },
-                                  color: GlobalVariables.secondaryColor,
-                                ),
-                              ],
-                            ),
+                : SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          AppStrings.welcomeMessage,
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                      ListTile(
-                        tileColor: _authType == AuthType.signIn ? GlobalVariables.backgroundColor : null,
-                        title: const Text(AppStrings.signIn),
-                        leading: Radio(
-                            value: AuthType.signIn,
-                            groupValue: _authType,
-                            onChanged: (value) {
-                              setState(() {
-                                _authType = value as AuthType;
-                              });
-                            }),
-                      ),
-                      if (_authType == AuthType.signIn)
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          color: GlobalVariables.backgroundColor,
-                          child: Form(
-                            key: _signInFormKey,
-                            child: Column(
-                              children: [
-                                CustomTextField(
-                                  controller: _emailController,
-                                  hintText: AppStrings.enterYourEmail,
-                                  isEmail: true,
-                                ),
-                                const SizedBox(height: 10),
-                                CustomTextField(
-                                  controller: _passwordController,
-                                  hintText: AppStrings.enterYourPassword,
-                                  obscureText: !_isPasswordVisible,
-                                  suffixIcon: IconButton(
-                                    icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off),
-                                    onPressed: _togglePasswordVisibility,
+                        ListTile(
+                          tileColor: _authType == AuthType.signUp ? GlobalVariables.backgroundColor : null,
+                          title: const Text(
+                            AppStrings.createAccount,
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          leading: Radio(
+                              value: AuthType.signUp,
+                              groupValue: _authType,
+                              onChanged: (value) {
+                                setState(() {
+                                  _authType = value as AuthType;
+                                });
+                              }),
+                        ),
+                        if (_authType == AuthType.signUp)
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            color: GlobalVariables.backgroundColor,
+                            child: Form(
+                              key: _signUpFormKey,
+                              child: Column(
+                                children: [
+                                  CustomTextField(
+                                    controller: _nameController,
+                                    hintText: AppStrings.enterYourName,
                                   ),
-                                ),
-                                const SizedBox(height: 10),
-                                CustomButton(
-                                  color: GlobalVariables.secondaryColor,
-                                  text: AppStrings.signIn,
-                                  onTap: () {
-                                    signInUser();
-                                  },
-                                )
-                              ],
+                                  const SizedBox(height: 10),
+                                  CustomTextField(
+                                    controller: _emailController,
+                                    hintText: AppStrings.enterYourEmail,
+                                    textInputType: TextInputType.emailAddress,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  CustomTextField(
+                                    controller: _passwordController,
+                                    hintText: AppStrings.enterYourPassword,
+                                    textInputType: TextInputType.visiblePassword,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  CustomButton(
+                                    text: AppStrings.signUp,
+                                    onTap: () {
+                                      signUpUser();
+                                    },
+                                    color: GlobalVariables.floatingActionButtonColor,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
+                        ListTile(
+                          tileColor: _authType == AuthType.signIn ? GlobalVariables.backgroundColor : null,
+                          title: const Text(AppStrings.signIn),
+                          leading: Radio(
+                              value: AuthType.signIn,
+                              groupValue: _authType,
+                              onChanged: (value) {
+                                setState(() {
+                                  _authType = value as AuthType;
+                                });
+                              }),
                         ),
-                    ],
+                        if (_authType == AuthType.signIn)
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            color: GlobalVariables.backgroundColor,
+                            child: Form(
+                              key: _signInFormKey,
+                              child: Column(
+                                children: [
+                                  CustomTextField(
+                                    controller: _emailController,
+                                    hintText: AppStrings.enterYourEmail,
+                                    textInputType: TextInputType.emailAddress,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  CustomTextField(
+                                    controller: _passwordController,
+                                    hintText: AppStrings.enterYourPassword,
+                                    textInputType: TextInputType.visiblePassword,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  CustomButton(
+                                    color: GlobalVariables.floatingActionButtonColor,
+                                    text: AppStrings.signIn,
+                                    onTap: () {
+                                      signInUser();
+                                    },
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
           ),
         ));

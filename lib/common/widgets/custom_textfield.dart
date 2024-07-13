@@ -2,32 +2,50 @@ import 'package:cartify/constants/app_strings.dart';
 import 'package:cartify/constants/global_variables.dart';
 import 'package:flutter/material.dart';
 
-class CustomTextField extends StatelessWidget {
+class CustomTextField extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
-  final bool isEmail;
-  final bool obscureText; // To hide the password
-  final Widget? suffixIcon;
+  final TextInputType? textInputType;
   final int maxLines;
 
-  const CustomTextField({
-    super.key,
-    required this.controller,
-    required this.hintText,
-    this.isEmail = false,
-    this.obscureText = false,
-    this.suffixIcon,
-    this.maxLines = 1, // For Product Description
-  });
+  const CustomTextField(
+      {super.key,
+      required this.controller,
+      required this.hintText,
+      this.maxLines = 1, // For Product Description
+      this.textInputType = TextInputType.text});
+
+  @override
+  State<CustomTextField> createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<CustomTextField> {
+  late bool _obscureText;
+
+  @override
+  void initState() {
+    super.initState();
+    _obscureText = widget.textInputType == TextInputType.visiblePassword;
+  }
+
+  void _togglePasswordVisibility() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: controller,
+      controller: widget.controller,
       decoration: InputDecoration(
-        hintText: hintText,
-        suffixIcon: suffixIcon,
-        // Other decoration properties
+        hintText: widget.hintText,
+        suffixIcon: widget.textInputType == TextInputType.visiblePassword
+            ? IconButton(
+                icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility),
+                onPressed: _togglePasswordVisibility,
+              )
+            : null,
         border: const OutlineInputBorder(
           borderSide: BorderSide(
             color: Colors.black38,
@@ -39,13 +57,13 @@ class CustomTextField extends StatelessWidget {
           ),
         ),
       ),
-      keyboardType: isEmail ? TextInputType.emailAddress : TextInputType.text,
-      obscureText: obscureText,
+      keyboardType: widget.textInputType,
+      obscureText: _obscureText,
       validator: (val) {
         if (val == null || val.isEmpty) {
-          return hintText;
+          return widget.hintText;
         }
-        if (isEmail && !emailRegex.hasMatch(val)) {
+        if (widget.textInputType == TextInputType.emailAddress && !emailRegex.hasMatch(val)) {
           return AppStrings.enterAValidEmailAddress;
         }
         return null;

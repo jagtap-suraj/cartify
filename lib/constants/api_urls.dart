@@ -1,17 +1,24 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-// Base host and port
-String baseHost = dotenv.env['HOST']!;
-String basePort = dotenv.env['PORT']!;
+class ApiUrls {
+  // Base host and port
+  static String baseHost = dotenv.env['HOST']!;
+  static String basePort = dotenv.env['PORT']!;
 
-// Complete base URI
-String baseUri = 'http://$baseHost:$basePort';
+  // Complete base URI
+  static String baseUri = 'http://$baseHost:$basePort';
+  static String apiBaseUri = '$baseUri/api';
 
-// API base URI
-String apiBaseUri = '$baseUri/api';
+  // Authentication API endpoints
+  static String signInEndpoint = '$apiBaseUri/signin';
+  static String signUpEndpoint = '$apiBaseUri/signup';
+  static String getUserEndpoint = '$apiBaseUri/user';
+  static String tokenValidationEndpoint = '$apiBaseUri/istokenvalid';
 
-// Specific API endpoints
-String signInEndpoint = '$apiBaseUri/signin';
-String signUpEndpoint = '$apiBaseUri/signup';
-String getUserEndpoint = '$apiBaseUri/user';
-String tokenValidationEndpoint = '$apiBaseUri/istokenvalid';
+  // Cloudinary APIs
+  static String cloudName = dotenv.env['CLOUD_NAME']!;
+  static String uploadPreset = dotenv.env['UPLOAD_PRESET']!;
+
+  // Seller APIs
+  static String addProductEndpoint = '$baseUri/seller/add-product';
+}

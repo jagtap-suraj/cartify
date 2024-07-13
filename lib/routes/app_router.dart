@@ -1,9 +1,9 @@
 import 'package:cartify/common/widgets/custom_bottom_navigation_bar.dart';
 import 'package:cartify/constants/app_strings.dart';
 import 'package:cartify/features/account/screens/account_screen.dart';
-import 'package:cartify/features/admin/screens/add_product_screen.dart';
-import 'package:cartify/features/admin/screens/admin_screen.dart';
-import 'package:cartify/features/admin/screens/product_screen.dart';
+import 'package:cartify/features/seller/screens/add_product_screen.dart';
+import 'package:cartify/features/seller/screens/seller_screen.dart';
+import 'package:cartify/features/seller/screens/product_screen.dart';
 import 'package:cartify/features/auth/screens/auth_screen.dart';
 import 'package:cartify/features/home/screens/home_screen.dart';
 import 'package:cartify/splash_screen.dart';
@@ -19,7 +19,7 @@ enum AppRoute {
   authScreen('auth-screen', 'authScreen'),
 
   // Admin Screens
-  adminScreen('/admin-screen', 'adminScreen'),
+  sellerScreen('/seller-screen', 'sellerScreen'),
   productScreen('product-screen', 'productScreen'),
   addProductScreen('add-product-screen', 'addProductScreen');
 
@@ -59,11 +59,11 @@ final goRouter = GoRouter(
       ],
     ),
 
-    // Admin Routes
+    // Seller Routes
     GoRoute(
-      path: AppRoute.adminScreen.path,
-      name: AppRoute.adminScreen.name,
-      builder: (context, state) => const AdminScreen(),
+      path: AppRoute.sellerScreen.path,
+      name: AppRoute.sellerScreen.name,
+      builder: (context, state) => const SellerScreen(),
       routes: [
         GoRoute(
           path: AppRoute.productScreen.path,

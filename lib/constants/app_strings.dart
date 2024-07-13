@@ -58,4 +58,5 @@ class AppStrings {
   static const productQuantity = 'Product Quantity';
   static const sell = 'Sell';
   static const selectACategory = 'Select a category';
+  static const productAddedSuccessfully = 'Product added successfully';
 }

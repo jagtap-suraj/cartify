@@ -1,109 +1,110 @@
-import express from "express";
-import { body, validationResult } from "express-validator";
 import { Router } from "express";
 import bcryptjs from "bcryptjs";
 import User from "../models/user.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import authMiddleware from "../middlewares/authMiddleware.js";
+import Joi from "joi";
 dotenv.config();
 
 const authRouter = Router(); // Router for handling authentication routes.
 
-// SIGN UP
-authRouter.post(
-  "/api/signup",
-  [
-    body("name").notEmpty().withMessage("Name is required"),
-    body("email")
-      .notEmpty()
-      .withMessage("Email is required")
-      .isEmail()
-      .withMessage("Enter a valid email"),
-    body("password").notEmpty().withMessage("Password is required"),
-  ],
-  async (req, res) => {
-    const errors = validationResult(req); // Finds the validation errors in this request and wraps them in an object with handy functions
-    if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
-    }
-    try {
-      const { name, email, password } = req.body; // Extracting name, email and password from request body.
+// Define Joi validation schema for signup
+const signupSchema = Joi.object({
+  id: Joi.string().allow(null),
+  name: Joi.string().required(),
+  email: Joi.string().email().required(),
+  password: Joi.string().required(),
+  address: Joi.string().allow(null),
+  type: Joi.string().allow(null),
+  token: Joi.string().allow(null),
+});
 
-      const existingUser = await User.findOne({ email });
-      if (existingUser) {
-        return res
-          .status(400)
-          .json({ msg: "User with same email already exists!" });
-      }
-      const hashedPassword = await bcryptjs.hash(password, 8);
-      let user = new User({
-        name,
-        email,
-        password: hashedPassword,
-      });
-      user = await user.save();
-      res.json(user);
-    } catch (e) {
-      console.error(e); // Log the detailed error for server-side debugging
-      res.status(500).json({
-        error: "An unexpected error occurred. Please try again later.",
-      });
-    }
+// SIGN UP
+authRouter.post("/api/signup", async (req, res) => {
+  // Validate request body against schema
+  const { error } = signupSchema.validate(req.body);
+  if (error) {
+    return res.status(422).json({ errors: error.details });
   }
-);
+  try {
+    const { name, email, password } = req.body; // Extracting name, email and password from request body.
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ msg: "User with same email already exists!" });
+    }
+    const hashedPassword = await bcryptjs.hash(password, 8);
+    let user = new User({
+      name,
+      email,
+      password: hashedPassword,
+    });
+    user = await user.save();
+    res.json(user);
+  } catch (e) {
+    console.error(e); // Log the detailed error for server-side debugging
+    res.status(500).json({
+      error: "An unexpected error occurred. Please try again later.",
+    });
+  }
+});
+
+// Define Joi validation schema for signin
+const signinSchema = Joi.object({
+  id: Joi.string().allow(null),
+  name: Joi.string().allow(null),
+  email: Joi.string().email().required(),
+  password: Joi.string().required(),
+  address: Joi.string().allow(null),
+  type: Joi.string().allow(null),
+  token: Joi.string().allow(null),
+});
 
 // SIGN IN
-authRouter.post(
-  "/api/signin",
-  [
-    body("email")
-      .notEmpty()
-      .withMessage("Email is required")
-      .isEmail()
-      .withMessage("Enter a valid email"),
-    body("password").notEmpty().withMessage("Password is required"),
-  ],
-  async (req, res) => {
-    const errors = validationResult(req); // Finds the validation errors in this request and wraps them in an object with handy functions
-    if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
+authRouter.post("/api/signin", async (req, res) => {
+  // Validate request body against schema
+  const { error } = signinSchema.validate(req.body);
+  if (error) {
+    return res.status(422).json({ errors: error.details });
+  }
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ msg: "User doesn't exist!" });
     }
-    try {
-      const { email, password } = req.body;
-      const user = await User.findOne({ email });
-      if (!user) {
-        return res.status(400).json({ msg: "User doesn't exist!" });
-      }
-      // Two passwords can never have same hashed value so we have to use the compare method of bcryptjs
-      const isMatched = await bcryptjs.compare(password, user.password);
-      if (!isMatched) {
-        return res.status(400).json({ msg: "Incorrect Password" });
-      }
-      /**
-       *  jwt.sign function for signing a payload with a secret or private key.
-       *
-       * The { id: user._id } passed in curly braces is an object literal that will be encoded into the JWT.
-       * an object with a single property id is created, where the value of id is set to user_.id.
-       * This object is used as the payload parameter for the jwt.sign function.
-       * The payload in JWT (JSON Web Token) is the data that you want to securely transmit.
-       *
-       * The "passwordKey" is a string used as the secretOrPrivateKey parameter in the jwt.sign function
-       * This is a secret key used for HMAC algorithms to sign the token.
-       * The choice of "passwordKey" here is arbitrary for demonstration purposes;
-       *
-       * This token can be used for authenticating subsequent requests from the client.
-       */
-      const token = jwt.sign(
-        { id: user._id },
-        process.env.JWT_SECRETORPRIVATEKEY
-      );
-      /**
-       * ...user._doc uses the spread operator (...) to copy properties from user._doc into a new object.
-       * user._doc contains the user's document data from MongoDB, excluding Mongoose-specific methods or properties.
-       */
+    // Two passwords can never have same hashed value so we have to use the compare method of bcryptjs
+    const isMatched = await bcryptjs.compare(password, user.password);
+    if (!isMatched) {
+      return res.status(400).json({ msg: "Incorrect Password" });
+    }
+    /**
+     *  jwt.sign function for signing a payload with a secret or private key.
+     *
+     * The { id: user._id } passed in curly braces is an object literal that will be encoded into the JWT.
+     * an object with a single property id is created, where the value of id is set to user_.id.
+     * This object is used as the payload parameter for the jwt.sign function.
+     * The payload in JWT (JSON Web Token) is the data that you want to securely transmit.
+     *
+     * The "passwordKey" is a string used as the secretOrPrivateKey parameter in the jwt.sign function
+     * This is a secret key used for HMAC algorithms to sign the token.
+     * The choice of "passwordKey" here is arbitrary for demonstration purposes;
+     *
+     * This token can be used for authenticating subsequent requests from the client.
+     */
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRETORPRIVATEKEY
+    );
+    /**
+     * ...user._doc uses the spread operator (...) to copy properties from user._doc into a new object.
+     * user._doc contains the user's document data from MongoDB, excluding Mongoose-specific methods or properties.
+     */
 
-      /**
+    /**
      * Suppose user._doc looks like this:
      * {
         _id: "123",
@@ -119,15 +120,14 @@ authRouter.post(
           "email": "john@example.com"
         }
      */
-      res.json({ token, ...user._doc });
-    } catch (e) {
-      console.error(e);
-      res.status(500).json({
-        error: "An unexpected error occurred. Please try again later.",
-      });
-    }
+    res.json({ token, ...user._doc });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({
+      error: "An unexpected error occurred. Please try again later.",
+    });
   }
-);
+});
 
 // ISTOKENVALID
 authRouter.post("/api/istokenvalid", async (req, res) => {

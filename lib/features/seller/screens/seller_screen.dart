@@ -1,16 +1,16 @@
 import 'package:cartify/constants/app_strings.dart';
 import 'package:cartify/constants/global_variables.dart';
-import 'package:cartify/features/admin/screens/product_screen.dart';
+import 'package:cartify/features/seller/screens/product_screen.dart';
 import 'package:flutter/material.dart';
 
-class AdminScreen extends StatefulWidget {
-  const AdminScreen({super.key});
+class SellerScreen extends StatefulWidget {
+  const SellerScreen({super.key});
 
   @override
-  State<AdminScreen> createState() => _AdminScreenState();
+  State<SellerScreen> createState() => _SellerScreenState();
 }
 
-class _AdminScreenState extends State<AdminScreen> {
+class _SellerScreenState extends State<SellerScreen> {
   int _page = 0;
   double bottomBarWidth = 42;
   double bottomBarBorderWidth = 5;
