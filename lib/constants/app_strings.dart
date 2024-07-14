@@ -52,6 +52,7 @@ class AppStrings {
   static const orders = 'Orders';
 
   // Product Screen
+  static const buyNow = 'Buy Now';
   static const addProduct = 'Add Product';
   static const selectProductImages = 'Select Product Images';
   static const productName = 'Product Name';
@@ -66,4 +67,6 @@ class AppStrings {
   static const productDeletedSuccessfully = 'Product deleted successfully';
   static const eligibleForFreeShipping = 'Eligible for free shipping';
   static const inStock = 'In Stock';
+  static const addToCart = 'Add to Cart';
+  static const rateTheProduct = 'Rate the product';
 }

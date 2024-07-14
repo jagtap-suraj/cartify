@@ -1,5 +1,6 @@
 import 'package:cartify/constants/app_strings.dart';
 import 'package:cartify/constants/global_variables.dart';
+import 'package:cartify/providers/product_provider.dart';
 import 'package:cartify/providers/user_provider.dart';
 import 'package:cartify/routes/app_router.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ Future main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => UserProvider()),
+        ChangeNotifierProvider(create: (context) => ProductProvider()),
       ],
       child: const MyApp(),
     ),

@@ -27,6 +27,7 @@ class GlobalVariables {
   );
 
   static const primaryColor = Color.fromARGB(255, 29, 201, 192);
+  static const lightPrimaryColor = Color.fromARGB(255, 188, 233, 231);
   static const secondaryColor = Color.fromRGBO(255, 153, 0, 1);
   static const backgroundColor = Colors.white;
   static const Color greyBackgroundColor = Color(0xffebecee);

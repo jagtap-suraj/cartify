@@ -6,8 +6,12 @@ import 'package:cartify/features/home/widgets/address_box.dart';
 import 'package:cartify/features/search/screens/services/search_service.dart';
 import 'package:cartify/features/search/widgets/searched_product.dart';
 import 'package:cartify/models/product.dart';
+import 'package:cartify/providers/product_provider.dart';
+import 'package:cartify/routes/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class SearchScreen extends StatefulWidget {
   final String searchQuery;
@@ -59,6 +63,20 @@ class _SearchScreenState extends State<SearchScreen> {
     } finally {
       _toggleLoading();
     }
+  }
+
+  void saveProductDetails(Product product) {
+    final productProvider = Provider.of<ProductProvider>(context, listen: false);
+    productProvider.setProduct(product);
+  }
+
+  void navigateToProductDetailsScreen(String productId) {
+    context.pushNamed(
+      AppRoute.productDetailsScreen.name,
+      pathParameters: {
+        'productId': productId,
+      },
+    );
   }
 
   @override
@@ -121,7 +139,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             width: 1,
                           ),
                         ),
-                        hintText: 'Search Amazon.in',
+                        hintText: AppStrings.searchCartify,
                         hintStyle: const TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 17,
@@ -152,7 +170,10 @@ class _SearchScreenState extends State<SearchScreen> {
                     itemCount: productList!.length,
                     itemBuilder: (context, index) {
                       return GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          saveProductDetails(productList![index]);
+                          navigateToProductDetailsScreen(productList![index].id!);
+                        },
                         child: SearchedProduct(
                           product: productList![index],
                         ),
