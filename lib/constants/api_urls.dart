@@ -22,4 +22,7 @@ class ApiUrls {
   // Seller APIs
   static String sellerProductsEndpoint = '$baseUri/seller/products';
   static String sellerProductEndpoint = '$baseUri/seller/product';
+
+  // Product APIs
+  static String productsEndpoint = '$apiBaseUri/products';
 }

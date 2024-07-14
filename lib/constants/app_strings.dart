@@ -43,6 +43,7 @@ class AppStrings {
   static const searchCartify = 'Search Cartify';
   static const dealOfTheDay = 'Deal of the Day';
   static const seeAllDeals = 'See all deals';
+  static const keepShoppingFor = 'Keep shopping for';
 
   // Admin Screen
   static const admin = 'Admin';

@@ -1,5 +1,7 @@
 import 'package:cartify/constants/global_variables.dart';
+import 'package:cartify/routes/app_router.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class TopCategories extends StatelessWidget {
   const TopCategories({super.key});
@@ -14,8 +16,14 @@ class TopCategories extends StatelessWidget {
         itemExtent: 75,
         itemBuilder: (context, index) {
           return GestureDetector(
-            //TODO: handle onTap
-            onTap: () {},
+            onTap: () {
+              context.goNamed(
+                AppRoute.categoryDealsScreen.name,
+                pathParameters: {
+                  'category': GlobalVariables.categoryImages[index]['title']!
+                },
+              );
+            },
             child: Column(
               children: [
                 Container(

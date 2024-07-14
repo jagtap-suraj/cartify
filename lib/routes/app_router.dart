@@ -1,6 +1,7 @@
 import 'package:cartify/common/widgets/custom_bottom_navigation_bar.dart';
 import 'package:cartify/constants/app_strings.dart';
 import 'package:cartify/features/account/screens/account_screen.dart';
+import 'package:cartify/features/home/screens/category_deals_screen.dart';
 import 'package:cartify/features/seller/screens/add_product_screen.dart';
 import 'package:cartify/features/seller/screens/seller_screen.dart';
 import 'package:cartify/features/seller/screens/product_screen.dart';
@@ -46,11 +47,16 @@ final goRouter = GoRouter(
           builder: (context, state) => const AuthScreen(),
         ),
         GoRoute(path: AppRoute.customBottomNavigationBar.path, name: AppRoute.customBottomNavigationBar.name, builder: (context, state) => const CustomBottomNavigationBar(), routes: [
-          GoRoute(
-            path: AppRoute.homeScreen.path,
-            name: AppRoute.homeScreen.name,
-            builder: (context, state) => const HomeScreen(),
-          ),
+          GoRoute(path: AppRoute.homeScreen.path, name: AppRoute.homeScreen.name, builder: (context, state) => const HomeScreen(), routes: [
+            GoRoute(
+              path: '${AppRoute.categoryDealsScreen.path}/:category',
+              name: AppRoute.categoryDealsScreen.name,
+              builder: (context, state) {
+                final category = state.pathParameters['category']!;
+                return CategoryDealsScreen(category: category);
+              },
+            )
+          ]),
           GoRoute(
             path: AppRoute.accountScreen.path,
             name: AppRoute.accountScreen.name,
