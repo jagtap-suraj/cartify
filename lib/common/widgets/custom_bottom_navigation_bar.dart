@@ -1,8 +1,10 @@
 import 'package:badges/badges.dart' as badges;
 import 'package:cartify/features/account/screens/account_screen.dart';
+import 'package:cartify/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:cartify/constants/global_variables.dart';
 import 'package:cartify/features/home/screens/home_screen.dart';
+import 'package:provider/provider.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   const CustomBottomNavigationBar({super.key});
@@ -40,6 +42,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
 
   @override
   Widget build(BuildContext context) {
+    final userCartLength = context.watch<UserProvider>().user?.cart?.length ?? 7;
     return Scaffold(
       body: _screens[_currentPageIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -52,7 +55,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         items: [
           _buildBottomNavItem(Icons.home_outlined, 0),
           _buildBottomNavItem(Icons.person_outline_outlined, 1),
-          _buildBottomNavItemWithBadge(Icons.shopping_cart_outlined, 2, '3'),
+          _buildBottomNavItemWithBadge(Icons.shopping_cart_outlined, 2, userCartLength.toString()),
         ],
       ),
     );

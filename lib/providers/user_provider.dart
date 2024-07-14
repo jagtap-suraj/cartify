@@ -11,6 +11,7 @@ class UserProvider extends ChangeNotifier {
     address: '',
     type: '',
     token: '',
+    cart: [],
   );
 
   User get user => _user; // Getter that has the return type of User and returns the user object
@@ -33,6 +34,12 @@ class UserProvider extends ChangeNotifier {
       type: '',
       token: '',
     );
+    notifyListeners();
+  }
+
+  void updateUser(User user) {
+    // Update the user in provider
+    _user = user;
     notifyListeners();
   }
 }

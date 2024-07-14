@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cartify/common/widgets/custom_button.dart';
 import 'package:cartify/common/widgets/stars.dart';
@@ -6,6 +8,7 @@ import 'package:cartify/constants/global_variables.dart';
 import 'package:cartify/constants/utils.dart';
 import 'package:cartify/features/product_details/screens/service/product_details_services.dart';
 import 'package:cartify/models/product.dart';
+import 'package:cartify/models/user.dart';
 import 'package:cartify/providers/product_provider.dart';
 import 'package:cartify/providers/user_provider.dart';
 import 'package:cartify/routes/app_router.dart';
@@ -94,6 +97,32 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       if (totalRating != 0) {
         avgRating = totalRating / product.ratings!.length;
       }
+    }
+  }
+
+  Future<void> addToCart(Product product) async {
+    const storage = FlutterSecureStorage();
+    final String? token = await storage.read(key: 'x-auth-token');
+    if (!mounted) return;
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    try {
+      final res = await productDetailsServices.addToCart(
+        token: token!,
+        product: product,
+      );
+      res.fold(
+        (left) => {
+          showSnackBar(context, left),
+        },
+        (right) {
+          User user = userProvider.user.copyWith(cart: right.cart);
+          userProvider.updateUser(user);
+          showSnackBar(context, AppStrings.productAddedToCart);
+        },
+      );
+    } catch (e) {
+      if (!mounted) return;
+      showSnackBar(context, AppStrings.genericErrorMessage);
     }
   }
 
@@ -265,7 +294,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               padding: const EdgeInsets.all(10),
               child: CustomButton(
                 text: AppStrings.addToCart,
-                onTap: () {},
+                onTap: () {
+                  addToCart(product);
+                },
                 color: GlobalVariables.floatingActionButtonColor,
               ),
             ),

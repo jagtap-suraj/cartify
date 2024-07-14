@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import { productSchema } from "./product.js";
 
 // Create a schema for the user.
 const userSchema = Schema({
@@ -30,6 +31,15 @@ const userSchema = Schema({
     type: String,
     default: "user",
   },
+  cart: [
+    {
+      product: productSchema,
+      quantity: {
+        type: Number,
+        required: true,
+      },
+    },
+  ],
 });
 
 const User = model("User", userSchema); // Create a model named User from the userSchema.

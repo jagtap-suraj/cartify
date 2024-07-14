@@ -8,6 +8,7 @@ class User {
   final String? address;
   final String? type;
   final String? token;
+  final List<dynamic>? cart;
 
   User({
     this.id,
@@ -17,6 +18,7 @@ class User {
     this.address,
     this.type,
     this.token,
+    this.cart,
   });
 
   /// Converts the User object to a map of key-value pairs
@@ -30,6 +32,7 @@ class User {
       'address': address,
       'type': type,
       'token': token,
+      'cart': cart,
     };
   }
 
@@ -43,6 +46,11 @@ class User {
       address: map['address'] ?? '',
       type: map['type'] ?? '',
       token: map['token'] ?? '',
+      cart: List<Map<String, dynamic>>.from(
+        map['cart']?.map(
+          (x) => Map<String, dynamic>.from(x),
+        ),
+      ),
     );
   }
 
@@ -78,6 +86,7 @@ class User {
     String? address,
     String? type,
     String? token,
+    List<dynamic>? cart,
   }) {
     return User(
       id: id ?? this.id,
@@ -87,6 +96,7 @@ class User {
       address: address ?? this.address,
       type: type ?? this.type,
       token: token ?? this.token,
+      cart: cart ?? this.cart,
     );
   }
 }

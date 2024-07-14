@@ -16,7 +16,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   void navigateToSearchScreen(String searchQuery) {
     context.goNamed(
       AppRoute.searchScreen.name,
@@ -25,7 +24,6 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     elevation: 1,
                     // We could have used our CustomTextFormField but design differs
                     child: TextFormField(
-                       onFieldSubmitted: navigateToSearchScreen,
+                      onFieldSubmitted: navigateToSearchScreen,
                       decoration: InputDecoration(
                         prefixIcon: InkWell(
                           // We used InkWell as when we click on it, it gives splash effect
