@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:cartify/models/rating.dart';
+
 class Product {
   final String name;
   final String description;
@@ -9,6 +11,7 @@ class Product {
   final double price;
   final String sellerId;
   final String? id;
+  final List<Rating>? ratings;
   Product({
     required this.name,
     required this.description,
@@ -17,6 +20,7 @@ class Product {
     required this.category,
     required this.price,
     required this.sellerId,
+    this.ratings,
     this.id,
   });
 
@@ -29,6 +33,7 @@ class Product {
       'category': category,
       'price': price,
       'sellerId': sellerId,
+      'ratings': ratings,
       'id': id,
     };
   }
@@ -42,33 +47,14 @@ class Product {
       category: map['category'] ?? '',
       price: map['price']?.toDouble() ?? 0.0,
       sellerId: map['sellerId'] ?? '',
+      ratings: map['ratings'] != null
+          ? List<Rating>.from(
+              map['ratings']?.map(
+                (x) => Rating.fromMap(x),
+              ),
+            )
+          : null,
       id: map['_id'],
-    );
-  }
-
-  Map<String, dynamic> toSqlMap() {
-    return {
-      'name': name,
-      'description': description,
-      'quantity': quantity,
-      'images': jsonEncode(images),
-      'category': category,
-      'price': price,
-      'sellerId': sellerId,
-      'id': id,
-    };
-  }
-
-  factory Product.fromSqlMap(Map<String, dynamic> map) {
-    return Product(
-      name: map['name'] ?? '',
-      description: map['description'] ?? '',
-      quantity: map['quantity']?.toDouble() ?? 0.0,
-      images: List<String>.from(jsonDecode(map['images'])),
-      category: map['category'] ?? '',
-      price: map['price']?.toDouble() ?? 0.0,
-      sellerId: map['sellerId'] ?? '',
-      id: map['id'],
     );
   }
 

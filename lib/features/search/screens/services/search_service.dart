@@ -11,12 +11,10 @@ class SearchService {
     required String token,
     required String searchQuery,
   }) async {
-    print("sooraj: $searchQuery");
     // Construct the URL with query parameters
     Uri url = Uri.parse(ApiUrls.productsEndpoint).replace(queryParameters: {
       'search': searchQuery,
     });
-    print("sooraj url: $url");
     http.Response res = await http.get(
       url, // Use the modified URL with query parameters
       headers: {
@@ -24,8 +22,6 @@ class SearchService {
         'x-auth-token': token,
       },
     );
-    print("sooraj res: ${res.body}");
-    print("sooraj res: ${res.statusCode}");
     String? httpErrorHandlerResponse = httpErrorHandler(response: res);
     if (httpErrorHandlerResponse != null) {
       return Left(httpErrorHandlerResponse);
@@ -45,7 +41,6 @@ class SearchService {
           ),
         );
       }
-      print("sooraj length: ${productList.length}");
       return Right(productList);
     }
   }

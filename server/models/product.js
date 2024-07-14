@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import ratingSchema from "./rating.js";
 
 const productSchema = Schema({
   name: {
@@ -29,6 +30,7 @@ const productSchema = Schema({
     type: String,
     required: true,
   },
+  ratings: [ratingSchema],
   // userId of the user who added the product
   sellerId: {
     type: String,

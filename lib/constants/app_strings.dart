@@ -69,4 +69,5 @@ class AppStrings {
   static const inStock = 'In Stock';
   static const addToCart = 'Add to Cart';
   static const rateTheProduct = 'Rate the product';
+  static const productRatedSuccessfully = 'Product rated successfully';
 }

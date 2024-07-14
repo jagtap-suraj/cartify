@@ -3,11 +3,15 @@ import 'package:cartify/common/widgets/custom_button.dart';
 import 'package:cartify/common/widgets/stars.dart';
 import 'package:cartify/constants/app_strings.dart';
 import 'package:cartify/constants/global_variables.dart';
+import 'package:cartify/constants/utils.dart';
+import 'package:cartify/features/product_details/screens/service/product_details_services.dart';
 import 'package:cartify/models/product.dart';
 import 'package:cartify/providers/product_provider.dart';
+import 'package:cartify/providers/user_provider.dart';
 import 'package:cartify/routes/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +24,7 @@ class ProductDetailsScreen extends StatefulWidget {
 }
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
+  final ProductDetailsServices productDetailsServices = ProductDetailsServices();
   double avgRating = 0;
   double myRating = 0;
 
@@ -37,6 +42,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   void initState() {
     super.initState();
     obtainProductDetails();
+    calculateAverageRating();
   }
 
   void navigateToSearchScreen(String searchQuery) {
@@ -51,6 +57,44 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   void obtainProductDetails() {
     final productProvider = Provider.of<ProductProvider>(context, listen: false);
     product = productProvider.product;
+  }
+
+  Future<void> rateProduct(double rating) async {
+    try {
+      const storage = FlutterSecureStorage();
+      final String? token = await storage.read(key: 'x-auth-token');
+      final res = await productDetailsServices.rateProduct(
+        token: token!,
+        productId: product.id!,
+        rating: rating,
+      );
+      res.fold(
+        (left) => {
+          showSnackBar(context, left),
+        },
+        (right) {
+          showSnackBar(context, AppStrings.productRatedSuccessfully);
+        },
+      );
+    } catch (e) {
+      if (!mounted) return;
+      showSnackBar(context, AppStrings.genericErrorMessage);
+    }
+  }
+
+  void calculateAverageRating() {
+    double totalRating = 0;
+    if (product.ratings != null) {
+      for (int i = 0; i < product.ratings!.length; i++) {
+        totalRating += product.ratings![i].rating;
+        if (product.ratings![i].userId == Provider.of<UserProvider>(context, listen: false).user.id) {
+          myRating = product.ratings![i].rating;
+        }
+      }
+      if (totalRating != 0) {
+        avgRating = totalRating / product.ratings!.length;
+      }
+    }
   }
 
   @override
@@ -251,7 +295,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 Icons.star,
                 color: GlobalVariables.secondaryColor,
               ),
-              onRatingUpdate: (rating) {},
+              onRatingUpdate: (rating) {
+                myRating = rating;
+                rateProduct(rating);
+              },
             )
           ],
         ),
