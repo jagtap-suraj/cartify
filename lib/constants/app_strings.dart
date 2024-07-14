@@ -64,4 +64,6 @@ class AppStrings {
   static const productsFetchedSuccessfully = 'Products fetched successfully';
   static const noProductsFound = 'No products found';
   static const productDeletedSuccessfully = 'Product deleted successfully';
+  static const eligibleForFreeShipping = 'Eligible for free shipping';
+  static const inStock = 'In Stock';
 }

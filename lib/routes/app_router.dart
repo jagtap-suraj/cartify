@@ -2,6 +2,7 @@ import 'package:cartify/common/widgets/custom_bottom_navigation_bar.dart';
 import 'package:cartify/constants/app_strings.dart';
 import 'package:cartify/features/account/screens/account_screen.dart';
 import 'package:cartify/features/home/screens/category_deals_screen.dart';
+import 'package:cartify/features/search/screens/search_screen.dart';
 import 'package:cartify/features/seller/screens/add_product_screen.dart';
 import 'package:cartify/features/seller/screens/seller_screen.dart';
 import 'package:cartify/features/seller/screens/product_screen.dart';
@@ -23,7 +24,10 @@ enum AppRoute {
   sellerScreen('/seller-screen', 'sellerScreen'),
   productScreen('product-screen', 'productScreen'),
   addProductScreen('add-product-screen', 'addProductScreen'),
-  categoryDealsScreen('category-deals-screen', 'categoryDealsScreen');
+
+  // Home Screens
+  categoryDealsScreen('category-deals-screen', 'categoryDealsScreen'),
+  searchScreen('search-screen', 'searchScreen');
 
   final String path;
   final String name;
@@ -54,6 +58,14 @@ final goRouter = GoRouter(
               builder: (context, state) {
                 final category = state.pathParameters['category']!;
                 return CategoryDealsScreen(category: category);
+              },
+            ),
+            GoRoute(
+              path: AppRoute.searchScreen.path,
+              name: AppRoute.searchScreen.name,
+              builder: (context, state) {
+                final searchQuery = state.uri.queryParameters['searchQuery']!;
+                return SearchScreen(searchQuery: searchQuery);
               },
             )
           ]),

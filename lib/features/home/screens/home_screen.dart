@@ -4,7 +4,9 @@ import 'package:cartify/features/home/widgets/address_box.dart';
 import 'package:cartify/features/home/widgets/carousel_image.dart';
 import 'package:cartify/features/home/widgets/deal_of_the_day.dart';
 import 'package:cartify/features/home/widgets/top_categories.dart';
+import 'package:cartify/routes/app_router.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +16,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  void navigateToSearchScreen(String searchQuery) {
+    context.goNamed(
+      AppRoute.searchScreen.name,
+      queryParameters: {
+        'searchQuery': searchQuery,
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     elevation: 1,
                     // We could have used our CustomTextFormField but design differs
                     child: TextFormField(
-                      //TODO: Add onFieldSubmitted: navigateToSearchScreen,
+                       onFieldSubmitted: navigateToSearchScreen,
                       decoration: InputDecoration(
                         prefixIcon: InkWell(
                           // We used InkWell as when we click on it, it gives splash effect
