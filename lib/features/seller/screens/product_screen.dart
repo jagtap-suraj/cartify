@@ -5,9 +5,7 @@ import 'package:cartify/constants/utils.dart';
 import 'package:cartify/features/account/widgets/single_product.dart';
 import 'package:cartify/features/seller/services/seller_services.dart';
 import 'package:cartify/models/product.dart';
-import 'package:cartify/providers/database_provider.dart';
 import 'package:cartify/providers/user_provider.dart';
-import 'package:cartify/repository/product_repository.dart';
 import 'package:cartify/routes/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -23,15 +21,13 @@ class ProductScreen extends StatefulWidget {
 
 class _ProductScreenState extends State<ProductScreen> {
   final SellerServices sellerServices = SellerServices();
-  final db = DatabaseProvider.dbProvider;
-  final productRepository = ProductRepository();
   bool _isLoading = false;
   List<Product>? products;
 
   // Notifier to refresh the product list when a new product is added from the AddProductScreen
   void _refreshListener() {
     if (refreshProductListNotifier.value) {
-      fetchSellerProducts();
+      refreshProducts();
       // Reset the notifier
       refreshProductListNotifier.value = false;
     }
@@ -42,25 +38,13 @@ class _ProductScreenState extends State<ProductScreen> {
     super.initState();
     // Listen to the notifier
     refreshProductListNotifier.addListener(_refreshListener);
-    fetchSellerProducts();
+    refreshProducts();
   }
 
   void _toggleLoading() {
     setState(() {
       _isLoading = !_isLoading;
     });
-  }
-
-  void fetchSellerProducts() async {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-    final dbProducts = await productRepository.getProductsBySellerId(userProvider.user.id!);
-    if (dbProducts.isNotEmpty) {
-      setState(() {
-        products = dbProducts;
-      });
-    } else {
-      refreshProducts();
-    }
   }
 
   Future<void> refreshProducts() async {
@@ -76,9 +60,6 @@ class _ProductScreenState extends State<ProductScreen> {
         },
         (right) async {
           products = right;
-          // Save the products to the local database
-          await productRepository.deleteAllProducts();
-          await productRepository.createProducts(right);
           if (!mounted) return;
           showSnackBar(context, AppStrings.productsFetchedSuccessfully);
         },
@@ -107,8 +88,6 @@ class _ProductScreenState extends State<ProductScreen> {
             // products = products!.where((product) => product.id != productId).toList();
             // get the id from the right object and remove the product with that id
             products = products!.where((product) => product.id != right.id).toList();
-            // delete the product from the local database
-            productRepository.deleteProduct(right.id!);
           }),
           showSnackBar(context, AppStrings.productDeletedSuccessfully)
         },

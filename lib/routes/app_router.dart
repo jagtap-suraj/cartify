@@ -21,7 +21,8 @@ enum AppRoute {
   // Admin Screens
   sellerScreen('/seller-screen', 'sellerScreen'),
   productScreen('product-screen', 'productScreen'),
-  addProductScreen('add-product-screen', 'addProductScreen');
+  addProductScreen('add-product-screen', 'addProductScreen'),
+  categoryDealsScreen('category-deals-screen', 'categoryDealsScreen');
 
   final String path;
   final String name;

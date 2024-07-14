@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cartify/common/widgets/custom_button.dart';
@@ -9,16 +8,10 @@ import 'package:cartify/constants/app_strings.dart';
 import 'package:cartify/constants/global_variables.dart';
 import 'package:cartify/constants/utils.dart';
 import 'package:cartify/features/seller/services/seller_services.dart';
-import 'package:cartify/models/product.dart';
-import 'package:cartify/providers/database_provider.dart';
 import 'package:cartify/providers/user_provider.dart';
-import 'package:cartify/repository/product_repository.dart';
-import 'package:cartify/repository/user_repository.dart';
-import 'package:cartify/routes/app_router.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class AddProductScreen extends StatefulWidget {
@@ -66,8 +59,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
     if (_addProductFormKey.currentState!.validate() && _validateCategory() && images.isNotEmpty) {
       _toggleLoading();
       final userProvider = Provider.of<UserProvider>(context, listen: false);
-      final db = DatabaseProvider.dbProvider;
-      final productRepository = ProductRepository();
       try {
         const storage = FlutterSecureStorage();
         final String? token = await storage.read(key: 'x-auth-token');
@@ -88,8 +79,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
             showSnackBar(context, left)
           },
           (right) async {
-            // save product to local database
-            await productRepository.createProduct(right);
             // Notify the product screen to refresh the product list
             refreshProductListNotifier.value = true;
             // Reset any other state variables if necessary

@@ -2,13 +2,13 @@ import 'dart:convert';
 
 import 'package:cartify/common/widgets/custom_button.dart';
 import 'package:cartify/common/widgets/custom_textfield.dart';
+import 'package:cartify/common/widgets/loader.dart';
 import 'package:cartify/constants/app_strings.dart';
 import 'package:cartify/constants/global_variables.dart';
 import 'package:cartify/constants/utils.dart';
 import 'package:cartify/features/auth/services/auth_service.dart';
 import 'package:cartify/models/user.dart';
 import 'package:cartify/providers/user_provider.dart';
-import 'package:cartify/repository/user_repository.dart';
 import 'package:cartify/routes/app_router.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
@@ -95,16 +95,11 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
-  // Hashing function
-  String hashPassword(String password) {
-    return sha256.convert(utf8.encode(password)).toString();
-  }
 
   Future<void> signInUser() async {
     if (_signInFormKey.currentState!.validate()) {
       _toggleLoading();
       final userProvider = Provider.of<UserProvider>(context, listen: false);
-      final userRepository = UserRepository();
       try {
         final signInResult = await authService.signInUser(
           email: _emailController.text,
@@ -119,18 +114,6 @@ class _AuthScreenState extends State<AuthScreen> {
             showSnackBar(context, AppStrings.userSignInSuccess);
             storage.write(key: 'x-auth-token', value: right.token);
             userProvider.setUser(right);
-            String hashedPassword = hashPassword(_passwordController.text);
-            // Create a new User object with the hashed password
-            User newUser = User(
-              id: right.id,
-              name: right.name,
-              email: right.email,
-              password: hashedPassword, // Use the hashed password here
-              address: right.address,
-              type: right.type,
-            );
-            // Store the new User object in the database
-            await userRepository.createUser(newUser);
             if (!mounted) return;
             if (userProvider.user.type == 'admin' || userProvider.user.type == 'seller') {
               context.goNamed(AppRoute.sellerScreen.name);
@@ -165,7 +148,7 @@ class _AuthScreenState extends State<AuthScreen> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: _isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Loader()
                 : SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
