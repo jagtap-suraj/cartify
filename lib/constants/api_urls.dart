@@ -25,4 +25,5 @@ class ApiUrls {
 
   // Product APIs
   static String productsEndpoint = '$apiBaseUri/products';
+  static String dealOfTheDayEndpoint = '$productsEndpoint/dealoftheday';
 }

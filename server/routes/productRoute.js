@@ -87,4 +87,37 @@ productRouter.post(
   }
 );
 
+// Deal of the day base on the highest rating
+productRouter.get("/api/products/dealoftheday", authMiddleware, async (req, res) => {
+  try {
+    const products = await Product.aggregate([
+      { $unwind: "$ratings" },
+      {
+        $group: {
+          _id: "$_id",
+          name: { $first: "$name" },
+          description: { $first: "$description" },
+          images: { $first: "$images" },
+          quantity: { $first: "$quantity" },
+          price: { $first: "$price" },
+          category: { $first: "$category" },
+          sellerId: { $first: "$sellerId" },
+          averageRating: { $avg: "$ratings.rating" },
+          totalRatings: { $sum: 1 },
+        },
+      },
+      { $sort: { averageRating: -1, totalRatings: -1 } },
+      { $limit: 1 },
+    ]);
+
+    if (products.length > 0) {
+      res.json(products[0]);
+    } else {
+      res.status(404).json({ error: "No products found." });
+    }
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 export default productRouter;

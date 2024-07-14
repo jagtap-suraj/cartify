@@ -16,10 +16,10 @@ import 'package:go_router/go_router.dart';
 enum AppRoute {
   // Initial Screens
   splashScreen('/', 'splashScreen'),
-  customBottomNavigationBar('bottom-navigation-bar', 'bottomNavigationBar'),
+  customBottomNavigationBar('/bottom-navigation-bar', 'bottomNavigationBar'),
   homeScreen('home-screen', 'homeScreen'),
   accountScreen('account-screen', 'accountScreen'),
-  authScreen('auth-screen', 'authScreen'),
+  authScreen('/auth-screen', 'authScreen'),
 
   // Admin Screens
   sellerScreen('/seller-screen', 'sellerScreen'),
@@ -46,47 +46,48 @@ final goRouter = GoRouter(
       path: AppRoute.splashScreen.path,
       name: AppRoute.splashScreen.name,
       builder: (context, state) => const SplashScreen(),
-      routes: [
-        GoRoute(
-          path: AppRoute.authScreen.path,
-          name: AppRoute.authScreen.name,
-          builder: (context, state) => const AuthScreen(),
-        ),
-        GoRoute(path: AppRoute.customBottomNavigationBar.path, name: AppRoute.customBottomNavigationBar.name, builder: (context, state) => const CustomBottomNavigationBar(), routes: [
-          GoRoute(path: AppRoute.homeScreen.path, name: AppRoute.homeScreen.name, builder: (context, state) => const HomeScreen(), routes: [
-            GoRoute(
-              path: '${AppRoute.categoryDealsScreen.path}/:category',
-              name: AppRoute.categoryDealsScreen.name,
-              builder: (context, state) {
-                final category = state.pathParameters['category']!;
-                return CategoryDealsScreen(category: category);
-              },
-            ),
-            GoRoute(
-              path: AppRoute.searchScreen.path,
-              name: AppRoute.searchScreen.name,
-              builder: (context, state) {
-                final searchQuery = state.uri.queryParameters['searchQuery']!;
-                return SearchScreen(searchQuery: searchQuery);
-              },
-            ),
-            GoRoute(
-              path: '${AppRoute.productDetailsScreen.path}/:productId',
-              name: AppRoute.productDetailsScreen.name,
-              builder: (context, state) {
-                final productId = state.pathParameters['productId']!;
-                return ProductDetailsScreen(productId: productId);
-              },
-            )
-          ]),
-          GoRoute(
-            path: AppRoute.accountScreen.path,
-            name: AppRoute.accountScreen.name,
-            builder: (context, state) => const AccountScreen(),
-          ),
-        ]),
-      ],
     ),
+    GoRoute(
+      path: AppRoute.authScreen.path,
+      name: AppRoute.authScreen.name,
+      builder: (context, state) => const AuthScreen(),
+    ),
+    GoRoute(path: AppRoute.customBottomNavigationBar.path, name: AppRoute.customBottomNavigationBar.name, builder: (context, state) => const CustomBottomNavigationBar(), routes: [
+      GoRoute(
+        path: AppRoute.homeScreen.path,
+        name: AppRoute.homeScreen.name,
+        builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: '${AppRoute.categoryDealsScreen.path}/:category',
+        name: AppRoute.categoryDealsScreen.name,
+        builder: (context, state) {
+          final category = state.pathParameters['category']!;
+          return CategoryDealsScreen(category: category);
+        },
+      ),
+      GoRoute(
+        path: AppRoute.searchScreen.path,
+        name: AppRoute.searchScreen.name,
+        builder: (context, state) {
+          final searchQuery = state.uri.queryParameters['searchQuery']!;
+          return SearchScreen(searchQuery: searchQuery);
+        },
+      ),
+      GoRoute(
+        path: '${AppRoute.productDetailsScreen.path}/:productId',
+        name: AppRoute.productDetailsScreen.name,
+        builder: (context, state) {
+          final productId = state.pathParameters['productId']!;
+          return ProductDetailsScreen(productId: productId);
+        },
+      ),
+      GoRoute(
+        path: AppRoute.accountScreen.path,
+        name: AppRoute.accountScreen.name,
+        builder: (context, state) => const AccountScreen(),
+      ),
+    ]),
 
     // Seller Routes
     GoRoute(

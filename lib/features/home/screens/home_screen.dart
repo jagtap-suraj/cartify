@@ -16,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
   void navigateToSearchScreen(String searchQuery) {
     context.goNamed(
       AppRoute.searchScreen.name,
@@ -24,6 +25,8 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

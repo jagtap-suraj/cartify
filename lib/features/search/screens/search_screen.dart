@@ -40,6 +40,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future<void> fetchSearchedProduct() async {
     try {
+      _toggleLoading();
       const storage = FlutterSecureStorage();
       final String? token = await storage.read(key: 'x-auth-token');
       final res = await searchService.fetchSearchedProducts(

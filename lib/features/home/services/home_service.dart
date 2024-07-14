@@ -44,4 +44,26 @@ class HomeService {
       return Right(productList);
     }
   }
+
+  Future<Either<String, Product>> fetchDealOfTheDay({
+    required String token,
+  }) async {
+    // Construct the URL with query parameters
+
+    http.Response res = await http.get(
+      Uri.parse(ApiUrls.dealOfTheDayEndpoint),
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'x-auth-token': token,
+      },
+    );
+    String? httpErrorHandlerResponse = httpErrorHandler(response: res);
+    if (httpErrorHandlerResponse != null) {
+      return Left(httpErrorHandlerResponse);
+    } else {
+      return Right(
+        Product.fromJson(res.body),
+      );
+    }
+  }
 }
