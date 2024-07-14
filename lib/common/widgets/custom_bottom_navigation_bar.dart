@@ -1,5 +1,6 @@
 import 'package:badges/badges.dart' as badges;
 import 'package:cartify/features/account/screens/account_screen.dart';
+import 'package:cartify/features/cart/screens/cart_screen.dart';
 import 'package:cartify/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:cartify/constants/global_variables.dart';
@@ -30,7 +31,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   final List<Widget> _screens = [
     const HomeScreen(),
     const AccountScreen(),
-    const Center(child: Text('Cart Screen')),
+    const CartScreen(),
   ];
 
   /// Sets the top line color of the selected icon
@@ -42,7 +43,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
 
   @override
   Widget build(BuildContext context) {
-    final userCartLength = context.watch<UserProvider>().user?.cart?.length ?? 7;
+    final userCartLength = context.watch<UserProvider>().user.cart?.length ?? 7;
     return Scaffold(
       body: _screens[_currentPageIndex],
       bottomNavigationBar: BottomNavigationBar(

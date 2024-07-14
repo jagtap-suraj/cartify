@@ -1,4 +1,4 @@
-import 'dart:convert';
+
 
 import 'package:cartify/constants/api_urls.dart';
 import 'package:cartify/constants/error_handling.dart';
@@ -7,62 +7,68 @@ import 'package:cartify/models/user.dart';
 import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
 
-class ProductDetailsServices {
-  Future<Either<String, User>> addToCart({
+class CartServices {
+  Future<Either<String, User>> reduceFromCart({
     required String token,
     required Product product,
   }) async {
-    Uri url = Uri.parse('${ApiUrls.addToCartEndpoint}/${product.id}');
-    http.Response res = await http.post(
+    Uri url = Uri.parse('${ApiUrls.reduceFromCartEndpoint}/${product.id}');
+    http.Response res = await http.delete(
       url,
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
         'x-auth-token': token,
       },
-      body: jsonEncode(
-        {
-          'productId': product.id,
-        },
-      ),
     );
     String? httpErrorHandlerResponse = httpErrorHandler(response: res);
     if (httpErrorHandlerResponse != null) {
       return Left(httpErrorHandlerResponse);
     } else {
-      print("sooraj User.fromJson(res.body): ${User.fromJson(res.body)}");
       return Right(
         User.fromJson(res.body),
       );
     }
   }
 
-  Future<Either<String, Product>> rateProduct({
+  Future<Either<String, User>> removeFromCart({
     required String token,
-    required String productId,
-    required double rating,
+    required Product product,
   }) async {
-    // Construct the URL with query parameters
-    // /api/products/:productId/rating
-    Uri url = Uri.parse('${ApiUrls.productsEndpoint}/$productId/rating');
-
-    http.Response res = await http.post(
-      url, // Use the modified URL with query parameters
+    Uri url = Uri.parse('${ApiUrls.removeFromCartEndpoint}/${product.id}');
+    http.Response res = await http.delete(
+      url,
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
         'x-auth-token': token,
       },
-      body: jsonEncode(
-        {
-          'rating': rating
-        },
-      ),
     );
     String? httpErrorHandlerResponse = httpErrorHandler(response: res);
     if (httpErrorHandlerResponse != null) {
       return Left(httpErrorHandlerResponse);
     } else {
       return Right(
-        Product.fromJson(res.body),
+        User.fromJson(res.body),
+      );
+    }
+  }
+
+  Future<Either<String, User>> emptyTheCart({
+    required String token,
+  }) async {
+    Uri url = Uri.parse(ApiUrls.emptyCartEndpoint);
+    http.Response res = await http.delete(
+      url,
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'x-auth-token': token,
+      },
+    );
+    String? httpErrorHandlerResponse = httpErrorHandler(response: res);
+    if (httpErrorHandlerResponse != null) {
+      return Left(httpErrorHandlerResponse);
+    } else {
+      return Right(
+        User.fromJson(res.body),
       );
     }
   }
