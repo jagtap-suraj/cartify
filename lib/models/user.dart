@@ -46,6 +46,19 @@ class User {
     );
   }
 
+  /// Converts a map of key-value pairs from a SQL database to a User object.
+  factory User.fromSqlMap(Map<String, dynamic> map) {
+    return User(
+      id: map['id'] ?? '',
+      name: map['name'] ?? '',
+      email: map['email'] ?? '',
+      password: map['password'] ?? '',
+      address: map['address'] ?? '',
+      type: map['type'] ?? '',
+      token: map['token'] ?? '',
+    );
+  }
+
   /// toMap(): Converts the User object to a map of key-value pairs
   /// json.encode(toMap()): Converts the map of key-value pairs to a JSON string
   /// toJson(): First calls toMap() that returns a map and then json.encode() that converts it to a JSON string

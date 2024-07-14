@@ -16,7 +16,7 @@ const signupSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().required(),
   address: Joi.string().allow(null),
-  type: Joi.string().allow(null),
+  type: Joi.string().required(),
   token: Joi.string().allow(null),
 });
 
@@ -28,7 +28,7 @@ authRouter.post("/api/signup", async (req, res) => {
     return res.status(422).json({ errors: error.details });
   }
   try {
-    const { name, email, password } = req.body; // Extracting name, email and password from request body.
+    const { name, email, password, type } = req.body; // Extracting name, email and password from request body.
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -41,6 +41,7 @@ authRouter.post("/api/signup", async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      type,
     });
     user = await user.save();
     res.json(user);

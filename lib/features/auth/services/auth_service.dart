@@ -13,6 +13,7 @@ class AuthService {
     required String email,
     required String password,
     required String name,
+    required String type,
   }) async {
     // Check internet connectivity
     final List<ConnectivityResult> connectivityResult = await (Connectivity().checkConnectivity());
@@ -24,6 +25,7 @@ class AuthService {
       name: name,
       password: password,
       email: email,
+      type: type,
     );
 
     http.Response res = await http.post(

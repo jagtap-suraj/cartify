@@ -80,12 +80,22 @@ class GlobalVariables {
     'Fashion',
     'Miscellaneous',
   ];
+
+  static const List<String> userTypes = [
+    'user',
+    'seller',
+  ];
 }
 
 enum TextFieldType {
   text,
   email,
   password
+}
+
+enum UserType {
+  user,
+  seller
 }
 
 //TODO: use enum in backend and frontend

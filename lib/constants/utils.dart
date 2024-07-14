@@ -51,3 +51,6 @@ Future<List<File>> pickImages() async {
   }
   return images;
 }
+
+// ValueNotifier to refresh the product list
+ValueNotifier<bool> refreshProductListNotifier = ValueNotifier(false);

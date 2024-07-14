@@ -21,4 +21,18 @@ class UserProvider extends ChangeNotifier {
     _user = user;
     notifyListeners();
   }
+
+  void deleteUser(String id) {
+    // Delete the user from provider
+    _user = User(
+      id: '',
+      name: '',
+      email: '',
+      password: '',
+      address: '',
+      type: '',
+      token: '',
+    );
+    notifyListeners();
+  }
 }

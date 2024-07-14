@@ -1,11 +1,16 @@
+import 'dart:convert';
+
 import 'package:cartify/common/widgets/custom_button.dart';
 import 'package:cartify/common/widgets/custom_textfield.dart';
 import 'package:cartify/constants/app_strings.dart';
 import 'package:cartify/constants/global_variables.dart';
 import 'package:cartify/constants/utils.dart';
 import 'package:cartify/features/auth/services/auth_service.dart';
+import 'package:cartify/models/user.dart';
 import 'package:cartify/providers/user_provider.dart';
+import 'package:cartify/repository/user_repository.dart';
 import 'package:cartify/routes/app_router.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
@@ -25,6 +30,8 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   bool _isLoading = false; // A loader to show while fetching user data
+  String? selectedUserType;
+  bool _isValidUserType = false;
   AuthType _authType = AuthType.signUp;
   final AuthService authService = AuthService();
   final storage = const FlutterSecureStorage();
@@ -39,6 +46,21 @@ class _AuthScreenState extends State<AuthScreen> {
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
 
+  bool _validatedUserType() {
+    if (selectedUserType == null) {
+      setState(() {
+        _isValidUserType = false; // Update the variable based on category selection
+      });
+      showSnackBar(context, 'Please select a category.'); // Optionally show a snackbar message
+      return false;
+    } else {
+      setState(() {
+        _isValidUserType = true;
+      });
+      return true;
+    }
+  }
+
   void _toggleLoading() {
     setState(() {
       _isLoading = !_isLoading;
@@ -46,13 +68,14 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   void signUpUser() async {
-    if (_signUpFormKey.currentState!.validate()) {
+    if (_signUpFormKey.currentState!.validate() && _validatedUserType()) {
       _toggleLoading(); // Start loading
       try {
         final signUpResult = await authService.signUpUser(
           email: _emailController.text,
           password: _passwordController.text,
           name: _nameController.text,
+          type: selectedUserType!,
         );
         if (!mounted) return;
         signUpResult.fold(
@@ -72,10 +95,16 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
+  // Hashing function
+  String hashPassword(String password) {
+    return sha256.convert(utf8.encode(password)).toString();
+  }
+
   Future<void> signInUser() async {
     if (_signInFormKey.currentState!.validate()) {
       _toggleLoading();
       final userProvider = Provider.of<UserProvider>(context, listen: false);
+      final userRepository = UserRepository();
       try {
         final signInResult = await authService.signInUser(
           email: _emailController.text,
@@ -90,6 +119,18 @@ class _AuthScreenState extends State<AuthScreen> {
             showSnackBar(context, AppStrings.userSignInSuccess);
             storage.write(key: 'x-auth-token', value: right.token);
             userProvider.setUser(right);
+            String hashedPassword = hashPassword(_passwordController.text);
+            // Create a new User object with the hashed password
+            User newUser = User(
+              id: right.id,
+              name: right.name,
+              email: right.email,
+              password: hashedPassword, // Use the hashed password here
+              address: right.address,
+              type: right.type,
+            );
+            // Store the new User object in the database
+            await userRepository.createUser(newUser);
             if (!mounted) return;
             if (userProvider.user.type == 'admin' || userProvider.user.type == 'seller') {
               context.goNamed(AppRoute.sellerScreen.name);
@@ -174,6 +215,29 @@ class _AuthScreenState extends State<AuthScreen> {
                                     controller: _passwordController,
                                     hintText: AppStrings.enterYourPassword,
                                     textInputType: TextInputType.visiblePassword,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  // user type dropdown
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: DropdownButton<String>(
+                                      value: selectedUserType,
+                                      hint: const Text(AppStrings.selectUserType),
+                                      padding: const EdgeInsets.only(right: 10),
+                                      icon: const Icon(Icons.keyboard_arrow_down),
+                                      items: GlobalVariables.userTypes.map((String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      }).toList(),
+                                      onChanged: (String? value) {
+                                        setState(() {
+                                          selectedUserType = value;
+                                          _isValidUserType = true;
+                                        });
+                                      },
+                                    ),
                                   ),
                                   const SizedBox(height: 10),
                                   CustomButton(

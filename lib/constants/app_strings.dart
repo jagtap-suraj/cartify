@@ -12,6 +12,7 @@ class AppStrings {
   static const signIn = 'Sign In';
   static const userSignUpSuccess = 'User signed up successfully.';
   static const userSignInSuccess = 'User signed in successfully.';
+  static const selectUserType = 'Select User Type';
 
   // Error Messages
   static const genericErrorMessage = 'An error occurred. Please try again.';
