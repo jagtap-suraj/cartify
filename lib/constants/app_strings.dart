@@ -71,4 +71,12 @@ class AppStrings {
   static const rateTheProduct = 'Rate the product';
   static const productRatedSuccessfully = 'Product rated successfully';
   static const productAddedToCart = 'Product added to cart';
+
+  // Address Screen
+  static const flatHouseNoBuilding = 'Flat, House no, Building';
+  static const areaStreet = 'Area, Street';
+  static const city = 'City';
+  static const townCity = 'Town/City';
+  static const pincode = 'Pincode';
+  static const addressSavedSuccessfully = 'Address saved successfully';
 }

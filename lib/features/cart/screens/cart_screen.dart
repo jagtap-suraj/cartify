@@ -30,6 +30,10 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
+  void navigateToAddressScreen() {
+    context.goNamed(AppRoute.addressScreen.name);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +128,9 @@ class _CartScreenState extends State<CartScreen> {
               padding: const EdgeInsets.all(8.0),
               child: CustomButton(
                 text: 'Proceed to Buy (${user.cart!.length} items)',
-                onTap: () {},
+                onTap: () {
+                  navigateToAddressScreen();
+                },
                 color: GlobalVariables.primaryColor,
               ),
             ),

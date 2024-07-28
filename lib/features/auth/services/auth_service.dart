@@ -21,12 +21,16 @@ class AuthService {
       return const Left(AppStrings.noInternetConnection);
     }
 
+    print("sooraj endpoint: ${ApiUrls.signUpEndpoint}");
+
     User user = User(
       name: name,
       password: password,
       email: email,
       type: type,
     );
+
+    print("sooraj request body: ${user.toJson()}");
 
     http.Response res = await http.post(
       Uri.parse(ApiUrls.signUpEndpoint),
@@ -35,6 +39,9 @@ class AuthService {
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
+
+    print("sooraj response body: ${res.body}");
+    print("sooraj response status code: ${res.statusCode}");
 
     String? httpErrorHandlerResponse = httpErrorHandler(response: res);
     if (httpErrorHandlerResponse != null) {

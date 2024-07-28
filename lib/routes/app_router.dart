@@ -1,6 +1,7 @@
 import 'package:cartify/common/widgets/custom_bottom_navigation_bar.dart';
 import 'package:cartify/constants/app_strings.dart';
 import 'package:cartify/features/account/screens/account_screen.dart';
+import 'package:cartify/features/address/screens/address_screen.dart';
 import 'package:cartify/features/home/screens/category_deals_screen.dart';
 import 'package:cartify/features/product_details/screens/product_details_screen.dart';
 import 'package:cartify/features/search/screens/search_screen.dart';
@@ -29,7 +30,9 @@ enum AppRoute {
   // Home Screens
   categoryDealsScreen('category-deals-screen', 'categoryDealsScreen'),
   searchScreen('search-screen', 'searchScreen'),
-  productDetailsScreen('product-details-screen', 'productDetailsScreen');
+  productDetailsScreen('product-details-screen', 'productDetailsScreen'),
+
+  addressScreen('address-screen', 'addressScreen');
 
   final String path;
   final String name;
@@ -87,6 +90,11 @@ final goRouter = GoRouter(
         name: AppRoute.accountScreen.name,
         builder: (context, state) => const AccountScreen(),
       ),
+      GoRoute(
+        path: AppRoute.addressScreen.path,
+        name: AppRoute.addressScreen.name,
+        builder: (context, state) => const AddressScreen(),
+      )
     ]),
 
     // Seller Routes

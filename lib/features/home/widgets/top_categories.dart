@@ -8,12 +8,13 @@ class TopCategories extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return SizedBox(
       height: 60,
       child: ListView.builder(
         itemCount: GlobalVariables.categoryImages.length,
         scrollDirection: Axis.horizontal,
-        itemExtent: 75,
+        itemExtent: screenWidth / 5,
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {

@@ -18,6 +18,7 @@ const signupSchema = Joi.object({
   address: Joi.string().allow(null),
   type: Joi.string().required(),
   token: Joi.string().allow(null),
+  cart: Joi.array().allow(null),
 });
 
 // SIGN UP
@@ -62,6 +63,7 @@ const signinSchema = Joi.object({
   address: Joi.string().allow(null),
   type: Joi.string().allow(null),
   token: Joi.string().allow(null),
+  cart: Joi.array().allow(null),
 });
 
 // SIGN IN
